@@ -12,13 +12,16 @@
         <!--android:theme="@style/Theme.NoTitle">-->
         <activity android:name=".HomeActivity"
             android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".HonkPlayActivity"
+            android:screenOrientation="landscape"/>
+
     </application>
 
 </manifest>
