@@ -148,8 +148,8 @@ public class HomeActivity extends AppCompatActivity
             mStatusTextView.setText(getString(R.string.signed_in_fmt, account.getDisplayName()));
 
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-//            Intent intent = new Intent(this, Activity.class);
-//            startActivity(intent);
+            Intent intent = new Intent(this, HonkPlayActivity.class);
+            startActivity(intent);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
             mStatusTextView.setText(R.string.signed_out);
