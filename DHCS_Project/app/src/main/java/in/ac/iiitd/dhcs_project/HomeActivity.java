@@ -40,6 +40,7 @@ public class HomeActivity extends AppCompatActivity
     private static final String TAG = "HomeActivity";
     private static final int RC_SIGN_IN = 9001;
 
+    private int currentLevel = 0;
     private GoogleSignInClient mGoogleSignInClient;
     private TextView mStatusTextView;
 
@@ -48,10 +49,7 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Views
-//        mStatusTextView = findViewById(R.id.status);
 
-        // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
 //        findViewById(R.id.sign_out_button).setOnClickListener(this);
 //        findViewById(R.id.disconnect_button).setOnClickListener(this);

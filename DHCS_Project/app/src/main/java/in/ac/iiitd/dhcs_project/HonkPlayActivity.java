@@ -20,7 +20,6 @@ public class HonkPlayActivity extends AppCompatActivity {
 //    public final static String SCORE_KEY = "in.ac.iiitd.dhcs_project.HonkPlayActivity.SCORE_KEY" ;
 
     ProgressBar progressBar;
-    ProgressBarTimer progressBarTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +27,33 @@ public class HonkPlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_honk_play);
         setCurrentImage();
         setImageRotateListener();
+
+        class ProgressBarTimer extends CountDownTimer {
+            ProgressBar progressBar;
+            int finish = 0;
+            public ProgressBarTimer(long millisInFuture, long countDownInterval, ProgressBar progressBar) {
+                super(millisInFuture, countDownInterval);
+                this.progressBar = progressBar;
+            }
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                int progress = (int) (millisUntilFinished/100);
+                progressBar.setProgress(progress);
+            }
+
+            @Override
+            public void onFinish() {
+                progressBar.setProgress(0);
+                finish = 1;
+
+                finish();
+            }
+        }
+
+        ProgressBarTimer progressBarTimer;
+
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setProgress(100);
@@ -86,27 +112,5 @@ public class HonkPlayActivity extends AppCompatActivity {
     }
 }
 
-class ProgressBarTimer extends CountDownTimer {
-    ProgressBar progressBar;
-    int finish = 0;
-    public ProgressBarTimer(long millisInFuture, long countDownInterval, ProgressBar progressBar) {
-        super(millisInFuture, countDownInterval);
-        this.progressBar = progressBar;
-    }
 
-    @Override
-    public void onTick(long millisUntilFinished) {
-
-        int progress = (int) (millisUntilFinished/100);
-        progressBar.setProgress(progress);
-    }
-
-    @Override
-    public void onFinish() {
-        progressBar.setProgress(0);
-        finish = 1;
-    }
-}
-
-// Game does not stop when progress bar finishes.
 
