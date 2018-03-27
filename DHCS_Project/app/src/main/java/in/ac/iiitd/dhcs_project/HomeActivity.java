@@ -3,7 +3,6 @@ package in.ac.iiitd.dhcs_project;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,8 +13,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -24,12 +21,10 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -43,6 +38,8 @@ public class HomeActivity extends AppCompatActivity
     private int currentLevel = 0;
     private GoogleSignInClient mGoogleSignInClient;
     private TextView mStatusTextView;
+    SharedClass sharedObject;// = new SharedClass();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +47,7 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
 
 
+        sharedObject = new SharedClass();
         findViewById(R.id.sign_in_button).setOnClickListener(this);
 //        findViewById(R.id.sign_out_button).setOnClickListener(this);
 //        findViewById(R.id.disconnect_button).setOnClickListener(this);
@@ -192,7 +190,15 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void goToHonkPlay(View view) {
-        Intent intent = new Intent(this, HonkPlayActivity.class);
+
+//        int score = 0;
+//        int currentLevel = 0;
+//        public String[] levelInfo;
+
+
+        Intent intent = new Intent(this, QuestionPageActivity.class);
+        intent.putExtra("sharedObject", sharedObject);
+//        intent.putExtra("sharedObject2", test2);
         startActivity(intent);
     }
 }
@@ -230,4 +236,29 @@ class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
         imageView.setImageBitmap(result);
     }
 
+}
+
+class SharedClass implements Serializable {
+    public int score;
+    public int currentLevel;
+    public int maxLevel;
+    public String[] levelInfo;
+    public String[] extraInfo;
+
+    public SharedClass() {
+        score = 0;
+        currentLevel = 0;
+        maxLevel = 3;
+        levelInfo = new String[maxLevel+1];
+        extraInfo = new String[maxLevel+1];
+
+
+        levelInfo[1] = "Honk Once per Car!";
+        levelInfo[2] = "Tap on all on Cars in the Image!";
+        levelInfo[3] = "Scratch the Image to find the Cars!";
+
+        extraInfo[1] = "Press the horn as many number of cars in the image.";
+        extraInfo[2] = "Tap on as many number of cars present in the image.";
+        extraInfo[3] = "Scratch the image and then pick the right option from the available set of options.";
+    }
 }
