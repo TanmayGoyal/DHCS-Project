@@ -25,9 +25,13 @@
         <activity
             android:name=".HonkPlayActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".QuestionPageActivity"
+        <activity
+            android:name=".QuestionPageActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".InformationPageActivity"
+        <activity
+            android:name=".InformationPageActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name=".TapPlayActivity"
             android:screenOrientation="landscape"/>
     </application>
 

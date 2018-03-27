@@ -1,6 +1,7 @@
 package in.ac.iiitd.dhcs_project;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +18,7 @@ public class HonkPlayActivity extends AppCompatActivity {
     private int currImage = 0;
     private int numOfClicks = 0;
     private int score = 0;
-//    public final static String SCORE_KEY = "in.ac.iiitd.dhcs_project.HonkPlayActivity.SCORE_KEY" ;
+    private int correctAnswers = 0;
 
     ProgressBar progressBar;
 
@@ -47,13 +48,18 @@ public class HonkPlayActivity extends AppCompatActivity {
             public void onFinish() {
                 progressBar.setProgress(0);
                 finish = 1;
-
-                finish();
+                SharedClass obj = getObject();
+                if (correctAnswers >= obj.minImages[obj.currentLevel]) {
+                    startQuestionActivity(obj);
+                }
+                else {
+                    // WRONG DIALOG
+                    finish();
+                }
             }
         }
 
         ProgressBarTimer progressBarTimer;
-
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setProgress(100);
@@ -72,6 +78,20 @@ public class HonkPlayActivity extends AppCompatActivity {
 
     }
 
+    private SharedClass getObject() {
+        Intent i = getIntent();
+        return (SharedClass) i.getSerializableExtra("sharedObject");
+    }
+
+    public void startQuestionActivity(SharedClass sharedObject) {
+        Intent intent;
+        intent = new Intent(this, QuestionPageActivity.class);
+        intent.putExtra("sharedObject", sharedObject);
+
+        startActivity(intent);
+
+    }
+
     private void setImageRotateListener() {
         final Button rotatebutton = findViewById(R.id.go);
         rotatebutton.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +100,7 @@ public class HonkPlayActivity extends AppCompatActivity {
                 if (numOfClicks == answers[currImage]) {
                     setNewImage();
                     addToast("Correct Answer");
+                    correctAnswers++;
                 }
 
                 else {
@@ -111,6 +132,3 @@ public class HonkPlayActivity extends AppCompatActivity {
         Toast.makeText(context, text, duration).show();
     }
 }
-
-
-

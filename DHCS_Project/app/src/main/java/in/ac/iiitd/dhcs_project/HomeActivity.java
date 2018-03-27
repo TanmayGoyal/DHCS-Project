@@ -244,14 +244,21 @@ class SharedClass implements Serializable {
     public int maxLevel;
     public String[] levelInfo;
     public String[] extraInfo;
+    public int[] minImages;
 
     public SharedClass() {
         score = 0;
         currentLevel = 0;
-        maxLevel = 3;
-        levelInfo = new String[maxLevel+1];
-        extraInfo = new String[maxLevel+1];
+        maxLevel = 4;
 
+        levelInfo = new String[maxLevel];
+        extraInfo = new String[maxLevel];
+        minImages = new int[maxLevel];
+
+        minImages[0] = -1;
+        minImages[1] = 3;
+        minImages[2] = 1;
+        minImages[3] = 1;
 
         levelInfo[1] = "Honk Once per Car!";
         levelInfo[2] = "Tap on all on Cars in the Image!";
@@ -261,4 +268,12 @@ class SharedClass implements Serializable {
         extraInfo[2] = "Tap on as many number of cars present in the image.";
         extraInfo[3] = "Scratch the image and then pick the right option from the available set of options.";
     }
+
+    public void incrementCurrentLevel() {
+        this.currentLevel++;
+
+        if (currentLevel == maxLevel)
+            currentLevel = 1;
+    }
+
 }
