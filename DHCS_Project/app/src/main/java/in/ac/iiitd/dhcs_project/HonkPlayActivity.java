@@ -1,10 +1,14 @@
 package in.ac.iiitd.dhcs_project;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.HideReturnsTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,7 +21,6 @@ public class HonkPlayActivity extends AppCompatActivity {
     private int answers[] = {1, 1, 1, 2, 1, 3, 3, 4};
     private int currImage = 0;
     private int numOfClicks = 0;
-    private int score = 0;
     private int correctAnswers = 0;
 
     ProgressBar progressBar;
@@ -30,9 +33,9 @@ public class HonkPlayActivity extends AppCompatActivity {
         setImageRotateListener();
 
         class ProgressBarTimer extends CountDownTimer {
-            ProgressBar progressBar;
-            int finish = 0;
-            public ProgressBarTimer(long millisInFuture, long countDownInterval, ProgressBar progressBar) {
+            private ProgressBar progressBar;
+            private int finish = 0;
+            private ProgressBarTimer(long millisInFuture, long countDownInterval, ProgressBar progressBar) {
                 super(millisInFuture, countDownInterval);
                 this.progressBar = progressBar;
             }
@@ -50,11 +53,23 @@ public class HonkPlayActivity extends AppCompatActivity {
                 finish = 1;
                 SharedClass obj = getObject();
                 if (correctAnswers >= obj.minImages[obj.currentLevel]) {
+                    finish();
                     startQuestionActivity(obj);
                 }
                 else {
-                    // WRONG DIALOG
-                    finish();
+                    AlertDialog alertDialog;
+                    alertDialog = new AlertDialog.Builder(HonkPlayActivity.this).create();
+                    alertDialog.setTitle("Wrong Answer");
+                    alertDialog.setMessage("Sorry, You Lost!");
+                    alertDialog.setIcon(R.drawable.wrong);
+                    alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(HonkPlayActivity.this, HomeActivity.class);
+                            finish();
+                            startActivity(intent);
+                        }
+                    });
+                    alertDialog.show();
                 }
             }
         }
@@ -65,11 +80,12 @@ public class HonkPlayActivity extends AppCompatActivity {
         progressBar.setProgress(100);
         progressBarTimer = new ProgressBarTimer(10000, 1, progressBar);
 
-
+//        final MediaPlayer mp = MediaPlayer.create(HonkPlayActivity.this, R.raw.car_honk);
         final Button honkButton = findViewById(R.id.honkButton);
         honkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                mp.start();
                 numOfClicks++;
             }
         });
@@ -93,10 +109,12 @@ public class HonkPlayActivity extends AppCompatActivity {
     }
 
     private void setImageRotateListener() {
-        final Button rotatebutton = findViewById(R.id.go);
-        rotatebutton.setOnClickListener(new View.OnClickListener() {
+        final Button rotateButton = findViewById(R.id.go);
+        rotateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
+//                mp.release();
+//                mp = null;
                 if (numOfClicks == answers[currImage]) {
                     setNewImage();
                     addToast("Correct Answer");
@@ -104,8 +122,19 @@ public class HonkPlayActivity extends AppCompatActivity {
                 }
 
                 else {
-                    // INCOMPLETE go to home page
-                    addToast("Wrong Answer");
+                    AlertDialog alertDialog;
+                    alertDialog = new AlertDialog.Builder(HonkPlayActivity.this).create();
+                    alertDialog.setTitle("Wrong Answer");
+                    alertDialog.setMessage("Sorry, You Lost!");
+                    alertDialog.setIcon(R.drawable.wrong);
+                    alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(HonkPlayActivity.this, HomeActivity.class);
+                            finish();
+                            startActivity(intent);
+                        }
+                    });
+                    alertDialog.show();
                 }
                 numOfClicks = 0;
                 setCurrentImage();
@@ -125,7 +154,6 @@ public class HonkPlayActivity extends AppCompatActivity {
     }
 
     private void addToast(String value) {
-
         CharSequence text = value;
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context="in.ac.iiitd.dhcs_project.ScratchPlayActivity">
+
+    <Button
+        android:id="@+id/optionButton4"
+        android:layout_width="143dp"
+        android:layout_height="74dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="432dp"
+        android:text="4"
+        android:theme="@style/StartButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/optionButton3"
+        android:layout_marginLeft="432dp"
+        android:layout_marginRight="16dp" />
+
+    <com.cooltechworks.views.ScratchImageView
+        android:id="@+id/sample_image"
+        android:layout_width="402dp"
+        android:layout_height="290dp"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="84dp"
+        android:layout_marginEnd="21dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="21dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="72dp"
+        android:layout_weight="7"
+        android:background="@android:color/background_dark"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/optionButton4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/optionButton2"
+        android:layout_width="143dp"
+        android:layout_height="74dp"
+        android:layout_marginBottom="172dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="432dp"
+        android:text="1"
+        android:theme="@style/StartButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/optionButton1"
+        android:layout_marginLeft="432dp"
+        android:layout_marginRight="16dp" />
+
+    <Button
+        android:id="@+id/optionButton3"
+        android:layout_width="143dp"
+        android:layout_height="74dp"
+        android:layout_marginBottom="92dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="432dp"
+        android:text="2"
+        android:theme="@style/StartButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/optionButton2"
+        android:layout_marginLeft="432dp"
+        android:layout_marginRight="16dp" />
+
+    <Button
+        android:id="@+id/optionButton1"
+        android:layout_width="143dp"
+        android:layout_height="81dp"
+        android:layout_marginBottom="256dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="432dp"
+        android:layout_marginTop="57dp"
+        android:text="3"
+        android:theme="@style/StartButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="432dp"
+        android:layout_marginRight="16dp" />
+
+</android.support.constraint.ConstraintLayout>

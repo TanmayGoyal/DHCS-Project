@@ -40,8 +40,7 @@ public class QuestionPageActivity extends AppCompatActivity {
             intent.putExtra("sharedObject", sharedObject);
         }
         else  {
-            //ADD INTENT FOR LEVEL3 ACTIVITY
-            intent = new Intent(this, HonkPlayActivity.class);
+            intent = new Intent(this, ScratchPlayActivity.class);
             intent.putExtra("sharedObject", sharedObject);
         }
         startActivity(intent);
@@ -61,12 +60,5 @@ public class QuestionPageActivity extends AppCompatActivity {
     private SharedClass getObject() {
         Intent i = getIntent();
         return (SharedClass) i.getSerializableExtra("sharedObject");
-    }
-    private void addToast(String value) {
-
-        CharSequence text = value;
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-        Toast.makeText(context, text, duration).show();
     }
 }

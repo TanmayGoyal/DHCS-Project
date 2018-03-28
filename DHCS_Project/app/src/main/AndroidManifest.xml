@@ -31,8 +31,11 @@
         <activity
             android:name=".InformationPageActivity"
             android:screenOrientation="landscape" />
-        <activity android:name=".TapPlayActivity"
-            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".TapPlayActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name=".ScratchPlayActivity"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>
