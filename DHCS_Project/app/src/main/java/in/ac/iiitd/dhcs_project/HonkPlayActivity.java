@@ -9,17 +9,30 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Random;
+
 public class HonkPlayActivity extends AppCompatActivity {
 
-    private Integer images[] = {R.drawable.img1, R.drawable.img2, R.drawable.img3, R.drawable.img4, R.drawable.img5, R.drawable.img6, R.drawable.img7, R.drawable.img8};
-    private int answers[] = {1, 1, 1, 2, 1, 3, 3, 4};
-    private int currImage = 0;
+    private Integer images[] = {R.drawable.img01_original, R.drawable.img02_original, R.drawable.img03_original, R.drawable.img04_original, R.drawable.img05_original, R.drawable.img06_original, R.drawable.img07_original, R.drawable.img08_original, R.drawable.img09_original};
+    private Integer labels[] = {R.drawable.img01_label, R.drawable.img02_label, R.drawable.img03_label, R.drawable.img04_label, R.drawable.img05_label, R.drawable.img06_label, R.drawable.img07_label, R.drawable.img08_label, R.drawable.img09_label};
+    private int currImage;
+
+    Random rand;
+
+    private String answers[] = new  String[9];
     private int numOfClicks = 0;
     private int correctAnswers = 0;
 
@@ -29,6 +42,11 @@ public class HonkPlayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_honk_play);
+
+        rand = new Random();
+        currImage = rand.nextInt(9);
+
+        setAnswers();
         setCurrentImage();
         setImageRotateListener();
 
@@ -52,7 +70,7 @@ public class HonkPlayActivity extends AppCompatActivity {
                 progressBar.setProgress(0);
                 finish = 1;
                 SharedClass obj = getObject();
-                if (correctAnswers >= obj.minImages[obj.currentLevel]) {
+                if (correctAnswers >= 0) {
                     finish();
                     startQuestionActivity(obj);
                 }
@@ -75,23 +93,17 @@ public class HonkPlayActivity extends AppCompatActivity {
         }
 
         ProgressBarTimer progressBarTimer;
-
         progressBar = findViewById(R.id.progressBar);
         progressBar.setProgress(100);
         progressBarTimer = new ProgressBarTimer(10000, 1, progressBar);
-
-//        final MediaPlayer mp = MediaPlayer.create(HonkPlayActivity.this, R.raw.car_honk);
         final Button honkButton = findViewById(R.id.honkButton);
         honkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                mp.start();
                 numOfClicks++;
             }
         });
         progressBarTimer.start();
-
-
     }
 
     private SharedClass getObject() {
@@ -113,15 +125,16 @@ public class HonkPlayActivity extends AppCompatActivity {
         rotateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-//                mp.release();
-//                mp = null;
-                if (numOfClicks == answers[currImage]) {
+
+                if (String.valueOf(numOfClicks).equals(answers[currImage])) {
                     setNewImage();
                     addToast("Correct Answer");
                     correctAnswers++;
                 }
 
                 else {
+                    setNewImage();
+                    /*
                     AlertDialog alertDialog;
                     alertDialog = new AlertDialog.Builder(HonkPlayActivity.this).create();
                     alertDialog.setTitle("Wrong Answer");
@@ -134,7 +147,7 @@ public class HonkPlayActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     });
-                    alertDialog.show();
+                    alertDialog.show();*/
                 }
                 numOfClicks = 0;
                 setCurrentImage();
@@ -143,9 +156,10 @@ public class HonkPlayActivity extends AppCompatActivity {
     }
 
     private void setNewImage() {
-        currImage++;
-        if (currImage == 8)
-            currImage = 0;
+        int prevcurrImage = currImage;
+        while (prevcurrImage == currImage) {
+            currImage = rand.nextInt(9);
+        }
     }
 
     private void setCurrentImage() {
@@ -159,4 +173,48 @@ public class HonkPlayActivity extends AppCompatActivity {
         int duration = Toast.LENGTH_SHORT;
         Toast.makeText(context, text, duration).show();
     }
+
+    //REmoving harcoding functions start from below here
+    private void setAnswers() {
+        for (int i = 1; i <= 9; i++) {
+            answers[i - 1] = String.valueOf(getCarNum("img0" + String.valueOf(i) + ".json" ));
+        }
+    }
+
+    public int getCarNum(String s) {
+        int carNum = 0;
+        JSONObject obj = null;
+        try {
+            obj = new JSONObject(loadJSONFromAsset(s));
+            JSONArray m_jArry = obj.getJSONArray("objects");
+            for (int i = 0; i < m_jArry.length(); i++) {
+                JSONObject jo_inside = m_jArry.getJSONObject(i);
+                Log.d("Details-->", jo_inside.getString("label"));
+                String label_value = jo_inside.getString("label");
+                if (label_value.equals("car")) {
+                    carNum++;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return carNum;
+    }
+
+    public String loadJSONFromAsset(String s) {
+        String json = null;
+        try {
+            InputStream is = getAssets().open(s);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+    }
+
 }

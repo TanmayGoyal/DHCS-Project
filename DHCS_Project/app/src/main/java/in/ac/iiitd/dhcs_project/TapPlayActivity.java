@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
@@ -18,78 +19,49 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Random;
+
 public class TapPlayActivity extends AppCompatActivity {
-    private Bitmap bitmap;
-    private Bitmap bitmap2;
+    private Bitmap bm;
+
+    private Integer images[] = {R.drawable.img01_original, R.drawable.img02_original, R.drawable.img03_original, R.drawable.img04_original, R.drawable.img05_original, R.drawable.img06_original, R.drawable.img07_original, R.drawable.img08_original, R.drawable.img09_original};
+    private Integer labels[] = {R.drawable.img01_label, R.drawable.img02_label, R.drawable.img03_label, R.drawable.img04_label, R.drawable.img05_label, R.drawable.img06_label, R.drawable.img07_label, R.drawable.img08_label, R.drawable.img09_label};
+
     private static final String TAG = "TapPlayActivity";
-    private int answers[] = {0,0};
-    private int currentImage = 0;
-    private int correctAnswers = 0;
+    private String answers[] = new  String[9];
 
-    private int leftX = 190;
-    private int rightX = 478;
-    private int topY = 232;
-    private int bottomY = 355;
-
-    private int leftX2 = 0;
-    private int rightX2 = 202;
-    private int topY2 = 252;
-    private int bottomY2 = 339;
-
-    private int wrongAnswer = 0;
+    private int currImage;
+    Random rand;
+    private int score = 0;
+    private boolean isCorrect = false;
     ProgressBar progressBar;
-
-    private ImageCoordinates coordinateArr[] = new ImageCoordinates[1];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tap_play);
-
-        setCoordinates(coordinateArr);
+        setAnswers();
         final ImageView imageView = findViewById(R.id.imageView);
-        bitmap2 = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-        Log.e(TAG, bitmap2.toString());
-        bitmap = bitmap2.copy(bitmap2.getConfig(), true);
+        rand = new Random();
+        currImage = rand.nextInt(3);
+        imageView.setImageResource(images[currImage]);
+        bm = BitmapFactory.decodeResource(getResources(), labels[currImage]);
 
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                int x = (int)event.getX();
-                int y = (int)event.getY();
-//                Toast.makeText(TapPlayActivity.this, String.valueOf(x) + " , " + String.valueOf(y), Toast.LENGTH_SHORT).show();
-                for (int i = x - 20; i <= x + 20; i++) {
-                    for (int j = y - 20; j <= y + 20; j++) {
-                        bitmap.setPixel(i, j, Color.BLACK);
-                    }
-                }
-                if (checkAnswer1(x,y)) {
-                    answers[0] = 1;
-                }
-                else if (checkAnswer2(x,y)) {
-                    answers[1] = 1;
-                }
-                else {
-//                    finish();
-//                    AlertDialog alertDialog;
-//                    alertDialog = new AlertDialog.Builder(TapPlayActivity.this).create();
-//                    alertDialog.setTitle("Wrong Answer");
-//                    alertDialog.setMessage("Sorry, You Lost!");
-//                    alertDialog.setIcon(R.drawable.wrong);
-//                    alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            Intent intent = new Intent(TapPlayActivity.this, HomeActivity.class);
-////                            finish();
-//                            startActivity(intent);
-//                        }
-//                    });
-//                    alertDialog.show();
-
-                    wrongAnswer = 1;
-                }
-                imageView.setImageBitmap(bitmap);
-                imageView.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
-
+                int x = (int)event.getX(), y = (int)event.getY();
+                float scaleHeight = (float) imageView.getDrawable().getIntrinsicHeight() / imageView.getMeasuredHeight(), scaleWidth = (float) imageView.getDrawable().getIntrinsicWidth() / imageView.getMeasuredWidth();
+                int pixel = bm.getPixel((int)(scaleWidth * x),(int)(scaleHeight * y));
+                int redValue = Color.red(pixel);
+                if (redValue == 26) score++;
+                if (String.valueOf(score).equals(answers[currImage]) || score >= 1) isCorrect = true;
                 return false;
             }
 
@@ -103,25 +75,18 @@ public class TapPlayActivity extends AppCompatActivity {
                 super(millisInFuture, countDownInterval);
                 this.progressBar = progressBar;
             }
-
             @Override
             public void onTick(long millisUntilFinished) {
-
                 int progress = (int) (millisUntilFinished/100);
                 progressBar.setProgress(progress);
             }
-
             @Override
             public void onFinish() {
                 progressBar.setProgress(0);
                 finish = 1;
-//                SharedClass obj = getObject();
-//                if (correctAnswers >= obj.minImages[obj.currentLevel]) {
-//                    startQuestionActivity(obj);
-//                }
                 final SharedClass obj = getObject();
 
-                if (answers[0] == 1 && answers[1] == 1 && wrongAnswer == 0) {
+                if (isCorrect) {
                     finish();
                     startQuestionActivity(obj);
                 }
@@ -143,19 +108,15 @@ public class TapPlayActivity extends AppCompatActivity {
             }
         }
 
-        ProgressBarTimer progressBarTimer;
-
         progressBar = findViewById(R.id.progressBar);
         progressBar.setProgress(100);
-        progressBarTimer = new ProgressBarTimer(10000, 1, progressBar);
-
+        ProgressBarTimer progressBarTimer = new ProgressBarTimer(10000, 1, progressBar);
         final SharedClass obj = getObject();
-
         final Button startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (answers[0] == 1 && answers[1] == 1) {
+                if (isCorrect) {
                     startQuestionActivity(obj);
                 }
                 else {
@@ -193,33 +154,47 @@ public class TapPlayActivity extends AppCompatActivity {
 
     }
 
-    private boolean checkAnswer1(int x, int y) {
-        return ((x >= leftX && x <= rightX) && (y >= topY && y <= bottomY));
+    //REmoving harcoding functions start from below here
+    private void setAnswers() {
+        for (int i = 1; i <= 9; i++) {
+            answers[i - 1] = String.valueOf(getCarNum("img0" + String.valueOf(i) + ".json" ));
+        }
     }
 
-    private boolean checkAnswer2(int x, int y) {
-        return ((x >= leftX2 && x <= rightX2) && (y >= topY2 && y <= bottomY2));
+    public int getCarNum(String s) {
+        int carNum = 0;
+        JSONObject obj = null;
+        try {
+            obj = new JSONObject(loadJSONFromAsset(s));
+            JSONArray m_jArry = obj.getJSONArray("objects");
+            for (int i = 0; i < m_jArry.length(); i++) {
+                JSONObject jo_inside = m_jArry.getJSONObject(i);
+                Log.d("Details-->", jo_inside.getString("label"));
+                String label_value = jo_inside.getString("label");
+                if (label_value.equals("car")) {
+                    carNum++;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return carNum;
     }
 
-
-    private void setCoordinates(ImageCoordinates coordinateArr[]) {
-
-        int leftX = 297;
-        int rightX = 605;
-        int topY = 256;
-        int bottomY = 371;
-
-//        coordinateArr[0].leftX = 60;
-//        coordinateArr[0].rightX = 695;
-//        coordinateArr[0].topY = 250;
-//        coordinateArr[0].bottomY = 350;
-    }
-
-    class ImageCoordinates {
-        int leftX;
-        int rightX;
-        int topY;
-        int bottomY;
+    public String loadJSONFromAsset(String s) {
+        String json = null;
+        try {
+            InputStream is = getAssets().open(s);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 
 }
