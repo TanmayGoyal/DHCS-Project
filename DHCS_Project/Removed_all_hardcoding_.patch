@@ -1,0 +1,862 @@
+Index: DHCS_Project/app/src/main/java/in/ac/iiitd/dhcs_project/HonkPlayActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- DHCS_Project/app/src/main/java/in/ac/iiitd/dhcs_project/HonkPlayActivity.java	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/app/src/main/java/in/ac/iiitd/dhcs_project/HonkPlayActivity.java	(date 1522667448776)
+@@ -9,17 +9,30 @@
+ import android.support.v7.app.AppCompatActivity;
+ import android.os.Bundle;
+ import android.text.method.HideReturnsTransformationMethod;
++import android.util.Log;
+ import android.view.View;
+ import android.widget.Button;
+ import android.widget.ImageView;
+ import android.widget.ProgressBar;
+ import android.widget.Toast;
+ 
++import org.json.JSONArray;
++import org.json.JSONException;
++import org.json.JSONObject;
++
++import java.io.IOException;
++import java.io.InputStream;
++import java.util.Random;
++
+ public class HonkPlayActivity extends AppCompatActivity {
+ 
+-    private Integer images[] = {R.drawable.img1, R.drawable.img2, R.drawable.img3, R.drawable.img4, R.drawable.img5, R.drawable.img6, R.drawable.img7, R.drawable.img8};
+-    private int answers[] = {1, 1, 1, 2, 1, 3, 3, 4};
+-    private int currImage = 0;
++    private Integer images[] = {R.drawable.img01_original, R.drawable.img02_original, R.drawable.img03_original, R.drawable.img04_original, R.drawable.img05_original, R.drawable.img06_original, R.drawable.img07_original, R.drawable.img08_original, R.drawable.img09_original};
++    private Integer labels[] = {R.drawable.img01_label, R.drawable.img02_label, R.drawable.img03_label, R.drawable.img04_label, R.drawable.img05_label, R.drawable.img06_label, R.drawable.img07_label, R.drawable.img08_label, R.drawable.img09_label};
++    private int currImage;
++
++    Random rand;
++
++    private String answers[] = new  String[9];
+     private int numOfClicks = 0;
+     private int correctAnswers = 0;
+ 
+@@ -29,6 +42,11 @@
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_honk_play);
++
++        rand = new Random();
++        currImage = rand.nextInt(9);
++
++        setAnswers();
+         setCurrentImage();
+         setImageRotateListener();
+ 
+@@ -52,7 +70,7 @@
+                 progressBar.setProgress(0);
+                 finish = 1;
+                 SharedClass obj = getObject();
+-                if (correctAnswers >= obj.minImages[obj.currentLevel]) {
++                if (correctAnswers >= 0) {
+                     finish();
+                     startQuestionActivity(obj);
+                 }
+@@ -75,23 +93,17 @@
+         }
+ 
+         ProgressBarTimer progressBarTimer;
+-
+         progressBar = findViewById(R.id.progressBar);
+         progressBar.setProgress(100);
+         progressBarTimer = new ProgressBarTimer(10000, 1, progressBar);
+-
+-//        final MediaPlayer mp = MediaPlayer.create(HonkPlayActivity.this, R.raw.car_honk);
+         final Button honkButton = findViewById(R.id.honkButton);
+         honkButton.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-//                mp.start();
+                 numOfClicks++;
+             }
+         });
+         progressBarTimer.start();
+-
+-
+     }
+ 
+     private SharedClass getObject() {
+@@ -113,15 +125,16 @@
+         rotateButton.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View arg0) {
+-//                mp.release();
+-//                mp = null;
+-                if (numOfClicks == answers[currImage]) {
++
++                if (String.valueOf(numOfClicks).equals(answers[currImage])) {
+                     setNewImage();
+                     addToast("Correct Answer");
+                     correctAnswers++;
+                 }
+ 
+                 else {
++                    setNewImage();
++                    /*
+                     AlertDialog alertDialog;
+                     alertDialog = new AlertDialog.Builder(HonkPlayActivity.this).create();
+                     alertDialog.setTitle("Wrong Answer");
+@@ -134,7 +147,7 @@
+                             startActivity(intent);
+                         }
+                     });
+-                    alertDialog.show();
++                    alertDialog.show();*/
+                 }
+                 numOfClicks = 0;
+                 setCurrentImage();
+@@ -143,9 +156,10 @@
+     }
+ 
+     private void setNewImage() {
+-        currImage++;
+-        if (currImage == 8)
+-            currImage = 0;
++        int prevcurrImage = currImage;
++        while (prevcurrImage == currImage) {
++            currImage = rand.nextInt(9);
++        }
+     }
+ 
+     private void setCurrentImage() {
+@@ -159,4 +173,48 @@
+         int duration = Toast.LENGTH_SHORT;
+         Toast.makeText(context, text, duration).show();
+     }
++
++    //REmoving harcoding functions start from below here
++    private void setAnswers() {
++        for (int i = 1; i <= 9; i++) {
++            answers[i - 1] = String.valueOf(getCarNum("img0" + String.valueOf(i) + ".json" ));
++        }
++    }
++
++    public int getCarNum(String s) {
++        int carNum = 0;
++        JSONObject obj = null;
++        try {
++            obj = new JSONObject(loadJSONFromAsset(s));
++            JSONArray m_jArry = obj.getJSONArray("objects");
++            for (int i = 0; i < m_jArry.length(); i++) {
++                JSONObject jo_inside = m_jArry.getJSONObject(i);
++                Log.d("Details-->", jo_inside.getString("label"));
++                String label_value = jo_inside.getString("label");
++                if (label_value.equals("car")) {
++                    carNum++;
++                }
++            }
++        } catch (JSONException e) {
++            e.printStackTrace();
++        }
++        return carNum;
++    }
++
++    public String loadJSONFromAsset(String s) {
++        String json = null;
++        try {
++            InputStream is = getAssets().open(s);
++            int size = is.available();
++            byte[] buffer = new byte[size];
++            is.read(buffer);
++            is.close();
++            json = new String(buffer, "UTF-8");
++        } catch (IOException ex) {
++            ex.printStackTrace();
++            return null;
++        }
++        return json;
++    }
++
+ }
+\ No newline at end of file
+Index: DHCS_Project/app/src/main/java/in/ac/iiitd/dhcs_project/ScratchPlayActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- DHCS_Project/app/src/main/java/in/ac/iiitd/dhcs_project/ScratchPlayActivity.java	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/app/src/main/java/in/ac/iiitd/dhcs_project/ScratchPlayActivity.java	(date 1522673141158)
+@@ -5,23 +5,52 @@
+ import android.content.Intent;
+ import android.support.v7.app.AppCompatActivity;
+ import android.os.Bundle;
++import android.util.Log;
+ import android.view.View;
+ import android.widget.Button;
++import android.widget.ImageView;
+ import android.widget.Toast;
+ 
++import org.json.JSONArray;
++import org.json.JSONException;
++import org.json.JSONObject;
++
++import java.io.IOException;
++import java.io.InputStream;
++import java.util.Random;
++
+ public class ScratchPlayActivity extends AppCompatActivity {
++    private Integer images[] = {R.drawable.img01_original, R.drawable.img02_original, R.drawable.img03_original, R.drawable.img04_original, R.drawable.img05_original, R.drawable.img06_original, R.drawable.img07_original, R.drawable.img08_original, R.drawable.img09_original};
++    private Integer labels[] = {R.drawable.img01_label, R.drawable.img02_label, R.drawable.img03_label, R.drawable.img04_label, R.drawable.img05_label, R.drawable.img06_label, R.drawable.img07_label, R.drawable.img08_label, R.drawable.img09_label};
++    private int currImage;
+ 
+-    private int answers[] = {0};
++    Random rand;
++
++    private String answers[] = new  String[9];
+ 
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_scratch_play);
+ 
++        setAnswers();
++        rand = new Random();
++        currImage = rand.nextInt(9);
++
++        final ImageView imageView = (ImageView) findViewById(R.id.sample_image);
++        imageView.setImageResource(images[currImage]);
++
+         Button button1 = (Button) findViewById(R.id.optionButton1);
+         Button button2 = findViewById(R.id.optionButton2);
+         Button button3 = findViewById(R.id.optionButton3);
+         Button button4 = findViewById(R.id.optionButton4);
++
++        int trueAnswer = Integer.parseInt(answers[currImage]);
++        button2.setText(String.valueOf(trueAnswer));
++        button1.setText(String.valueOf(trueAnswer + 1));
++        button3.setText(String.valueOf(trueAnswer - 1));
++        button4.setText(String.valueOf(trueAnswer + 2));
++
+         final SharedClass obj = getObject();
+ 
+         button1.setOnClickListener(new View.OnClickListener() {
+@@ -106,5 +135,48 @@
+ 
+         startActivity(intent);
+ 
++    }
++
++    //REmoving harcoding functions start from below here
++    private void setAnswers() {
++        for (int i = 1; i <= 9; i++) {
++            answers[i - 1] = String.valueOf(getCarNum("img0" + String.valueOf(i) + ".json" ));
++        }
++    }
++
++    public int getCarNum(String s) {
++        int carNum = 0;
++        JSONObject obj = null;
++        try {
++            obj = new JSONObject(loadJSONFromAsset(s));
++            JSONArray m_jArry = obj.getJSONArray("objects");
++            for (int i = 0; i < m_jArry.length(); i++) {
++                JSONObject jo_inside = m_jArry.getJSONObject(i);
++                Log.d("Details-->", jo_inside.getString("label"));
++                String label_value = jo_inside.getString("label");
++                if (label_value.equals("car")) {
++                    carNum++;
++                }
++            }
++        } catch (JSONException e) {
++            e.printStackTrace();
++        }
++        return carNum;
++    }
++
++    public String loadJSONFromAsset(String s) {
++        String json = null;
++        try {
++            InputStream is = getAssets().open(s);
++            int size = is.available();
++            byte[] buffer = new byte[size];
++            is.read(buffer);
++            is.close();
++            json = new String(buffer, "UTF-8");
++        } catch (IOException ex) {
++            ex.printStackTrace();
++            return null;
++        }
++        return json;
+     }
+ }
+Index: DHCS_Project/app/src/main/java/in/ac/iiitd/dhcs_project/TapPlayActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- DHCS_Project/app/src/main/java/in/ac/iiitd/dhcs_project/TapPlayActivity.java	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/app/src/main/java/in/ac/iiitd/dhcs_project/TapPlayActivity.java	(date 1522666287146)
+@@ -4,6 +4,7 @@
+ import android.content.DialogInterface;
+ import android.content.Intent;
+ import android.graphics.Bitmap;
++import android.graphics.BitmapFactory;
+ import android.graphics.Color;
+ import android.graphics.drawable.BitmapDrawable;
+ import android.media.Image;
+@@ -18,78 +19,49 @@
+ import android.widget.ProgressBar;
+ import android.widget.Toast;
+ 
++import org.json.JSONArray;
++import org.json.JSONException;
++import org.json.JSONObject;
++
++import java.io.IOException;
++import java.io.InputStream;
++import java.util.Random;
++
+ public class TapPlayActivity extends AppCompatActivity {
+-    private Bitmap bitmap;
+-    private Bitmap bitmap2;
++    private Bitmap bm;
++
++    private Integer images[] = {R.drawable.img01_original, R.drawable.img02_original, R.drawable.img03_original, R.drawable.img04_original, R.drawable.img05_original, R.drawable.img06_original, R.drawable.img07_original, R.drawable.img08_original, R.drawable.img09_original};
++    private Integer labels[] = {R.drawable.img01_label, R.drawable.img02_label, R.drawable.img03_label, R.drawable.img04_label, R.drawable.img05_label, R.drawable.img06_label, R.drawable.img07_label, R.drawable.img08_label, R.drawable.img09_label};
++
+     private static final String TAG = "TapPlayActivity";
+-    private int answers[] = {0,0};
+-    private int currentImage = 0;
+-    private int correctAnswers = 0;
+-
+-    private int leftX = 190;
+-    private int rightX = 478;
+-    private int topY = 232;
+-    private int bottomY = 355;
++    private String answers[] = new  String[9];
+ 
+-    private int leftX2 = 0;
+-    private int rightX2 = 202;
+-    private int topY2 = 252;
+-    private int bottomY2 = 339;
+-
+-    private int wrongAnswer = 0;
++    private int currImage;
++    Random rand;
++    private int score = 0;
++    private boolean isCorrect = false;
+     ProgressBar progressBar;
+ 
+-    private ImageCoordinates coordinateArr[] = new ImageCoordinates[1];
+-
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_tap_play);
+-
+-        setCoordinates(coordinateArr);
++        setAnswers();
+         final ImageView imageView = findViewById(R.id.imageView);
+-        bitmap2 = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+-        Log.e(TAG, bitmap2.toString());
+-        bitmap = bitmap2.copy(bitmap2.getConfig(), true);
++        rand = new Random();
++        currImage = rand.nextInt(3);
++        imageView.setImageResource(images[currImage]);
++        bm = BitmapFactory.decodeResource(getResources(), labels[currImage]);
+ 
+         imageView.setOnTouchListener(new View.OnTouchListener() {
+             @Override
+             public boolean onTouch(View v, MotionEvent event) {
+-                int x = (int)event.getX();
+-                int y = (int)event.getY();
+-//                Toast.makeText(TapPlayActivity.this, String.valueOf(x) + " , " + String.valueOf(y), Toast.LENGTH_SHORT).show();
+-                for (int i = x - 20; i <= x + 20; i++) {
+-                    for (int j = y - 20; j <= y + 20; j++) {
+-                        bitmap.setPixel(i, j, Color.BLACK);
+-                    }
+-                }
+-                if (checkAnswer1(x,y)) {
+-                    answers[0] = 1;
+-                }
+-                else if (checkAnswer2(x,y)) {
+-                    answers[1] = 1;
+-                }
+-                else {
+-//                    finish();
+-//                    AlertDialog alertDialog;
+-//                    alertDialog = new AlertDialog.Builder(TapPlayActivity.this).create();
+-//                    alertDialog.setTitle("Wrong Answer");
+-//                    alertDialog.setMessage("Sorry, You Lost!");
+-//                    alertDialog.setIcon(R.drawable.wrong);
+-//                    alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
+-//                        public void onClick(DialogInterface dialog, int which) {
+-//                            Intent intent = new Intent(TapPlayActivity.this, HomeActivity.class);
+-////                            finish();
+-//                            startActivity(intent);
+-//                        }
+-//                    });
+-//                    alertDialog.show();
+-
+-                    wrongAnswer = 1;
+-                }
+-                imageView.setImageBitmap(bitmap);
+-                imageView.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
+-
++                int x = (int)event.getX(), y = (int)event.getY();
++                float scaleHeight = (float) imageView.getDrawable().getIntrinsicHeight() / imageView.getMeasuredHeight(), scaleWidth = (float) imageView.getDrawable().getIntrinsicWidth() / imageView.getMeasuredWidth();
++                int pixel = bm.getPixel((int)(scaleWidth * x),(int)(scaleHeight * y));
++                int redValue = Color.red(pixel);
++                if (redValue == 26) score++;
++                if (String.valueOf(score).equals(answers[currImage]) || score >= 1) isCorrect = true;
+                 return false;
+             }
+ 
+@@ -103,25 +75,18 @@
+                 super(millisInFuture, countDownInterval);
+                 this.progressBar = progressBar;
+             }
+-
+             @Override
+             public void onTick(long millisUntilFinished) {
+-
+                 int progress = (int) (millisUntilFinished/100);
+                 progressBar.setProgress(progress);
+             }
+-
+             @Override
+             public void onFinish() {
+                 progressBar.setProgress(0);
+                 finish = 1;
+-//                SharedClass obj = getObject();
+-//                if (correctAnswers >= obj.minImages[obj.currentLevel]) {
+-//                    startQuestionActivity(obj);
+-//                }
+                 final SharedClass obj = getObject();
+ 
+-                if (answers[0] == 1 && answers[1] == 1 && wrongAnswer == 0) {
++                if (isCorrect) {
+                     finish();
+                     startQuestionActivity(obj);
+                 }
+@@ -143,19 +108,15 @@
+             }
+         }
+ 
+-        ProgressBarTimer progressBarTimer;
+-
+         progressBar = findViewById(R.id.progressBar);
+         progressBar.setProgress(100);
+-        progressBarTimer = new ProgressBarTimer(10000, 1, progressBar);
+-
++        ProgressBarTimer progressBarTimer = new ProgressBarTimer(10000, 1, progressBar);
+         final SharedClass obj = getObject();
+-
+         final Button startButton = findViewById(R.id.startButton);
+         startButton.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (answers[0] == 1 && answers[1] == 1) {
++                if (isCorrect) {
+                     startQuestionActivity(obj);
+                 }
+                 else {
+@@ -193,33 +154,47 @@
+ 
+     }
+ 
+-    private boolean checkAnswer1(int x, int y) {
+-        return ((x >= leftX && x <= rightX) && (y >= topY && y <= bottomY));
+-    }
+-
+-    private boolean checkAnswer2(int x, int y) {
+-        return ((x >= leftX2 && x <= rightX2) && (y >= topY2 && y <= bottomY2));
++    //REmoving harcoding functions start from below here
++    private void setAnswers() {
++        for (int i = 1; i <= 9; i++) {
++            answers[i - 1] = String.valueOf(getCarNum("img0" + String.valueOf(i) + ".json" ));
++        }
+     }
+ 
+-
+-    private void setCoordinates(ImageCoordinates coordinateArr[]) {
+-
+-        int leftX = 297;
+-        int rightX = 605;
+-        int topY = 256;
+-        int bottomY = 371;
+-
+-//        coordinateArr[0].leftX = 60;
+-//        coordinateArr[0].rightX = 695;
+-//        coordinateArr[0].topY = 250;
+-//        coordinateArr[0].bottomY = 350;
++    public int getCarNum(String s) {
++        int carNum = 0;
++        JSONObject obj = null;
++        try {
++            obj = new JSONObject(loadJSONFromAsset(s));
++            JSONArray m_jArry = obj.getJSONArray("objects");
++            for (int i = 0; i < m_jArry.length(); i++) {
++                JSONObject jo_inside = m_jArry.getJSONObject(i);
++                Log.d("Details-->", jo_inside.getString("label"));
++                String label_value = jo_inside.getString("label");
++                if (label_value.equals("car")) {
++                    carNum++;
++                }
++            }
++        } catch (JSONException e) {
++            e.printStackTrace();
++        }
++        return carNum;
+     }
+ 
+-    class ImageCoordinates {
+-        int leftX;
+-        int rightX;
+-        int topY;
+-        int bottomY;
++    public String loadJSONFromAsset(String s) {
++        String json = null;
++        try {
++            InputStream is = getAssets().open(s);
++            int size = is.available();
++            byte[] buffer = new byte[size];
++            is.read(buffer);
++            is.close();
++            json = new String(buffer, "UTF-8");
++        } catch (IOException ex) {
++            ex.printStackTrace();
++            return null;
++        }
++        return json;
+     }
+ 
+ }
+Index: DHCS_Project/app/src/main/res/layout-land/activity_honk_play.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- DHCS_Project/app/src/main/res/layout-land/activity_honk_play.xml	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/app/src/main/res/layout-land/activity_honk_play.xml	(date 1522672012966)
+@@ -28,8 +28,8 @@
+         android:layout_marginStart="24dp"
+         android:layout_marginTop="32dp"
+         android:layout_weight="5"
+-        android:scaleType="centerCrop"
+-        android:src="@drawable/img1"
++
++        android:src="@drawable/img01_original"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+Index: DHCS_Project/app/src/main/res/layout-land/activity_information_page.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- DHCS_Project/app/src/main/res/layout-land/activity_information_page.xml	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/app/src/main/res/layout-land/activity_information_page.xml	(date 1522668659459)
+@@ -14,7 +14,7 @@
+         android:layout_marginEnd="8dp"
+         android:layout_marginStart="8dp"
+         android:layout_marginTop="8dp"
+-        android:fontFamily="sans-serif-condensed"
++        android:fontFamily="serif"
+         android:gravity="center"
+         android:textColor="@android:color/white"
+         android:textSize="50sp"
+Index: DHCS_Project/app/src/main/res/layout-land/activity_question_page.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- DHCS_Project/app/src/main/res/layout-land/activity_question_page.xml	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/app/src/main/res/layout-land/activity_question_page.xml	(date 1522672345631)
+@@ -14,10 +14,11 @@
+         android:layout_marginEnd="8dp"
+         android:layout_marginStart="8dp"
+         android:layout_marginTop="8dp"
+-        android:fontFamily="sans-serif-condensed"
++        android:fontFamily="serif"
+         android:gravity="center"
+         android:textColor="@android:color/white"
+-        android:textSize="50sp"
++        android:textSize="60sp"
++        android:textStyle="bold"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent" />
+@@ -33,6 +34,7 @@
+         android:gravity="center"
+         android:textColor="@android:color/background_light"
+         android:textSize="50sp"
++        android:fontFamily="sans-serif"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+Index: DHCS_Project/app/src/main/res/layout-land/activity_scratch_play.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- DHCS_Project/app/src/main/res/layout-land/activity_scratch_play.xml	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/app/src/main/res/layout-land/activity_scratch_play.xml	(date 1522671728682)
+@@ -36,8 +36,8 @@
+         android:layout_marginTop="72dp"
+         android:layout_weight="7"
+         android:background="@android:color/background_dark"
++        android:src="@drawable/img01_original"
+         android:scaleType="centerCrop"
+-        android:src="@drawable/img1"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toStartOf="@+id/optionButton4"
+         app:layout_constraintStart_toStartOf="parent"
+Index: DHCS_Project/app/src/main/res/layout-land/activity_tap_play.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- DHCS_Project/app/src/main/res/layout-land/activity_tap_play.xml	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/app/src/main/res/layout-land/activity_tap_play.xml	(date 1522672024177)
+@@ -27,7 +27,7 @@
+         android:layout_marginEnd="14dp"
+         android:layout_marginStart="27dp"
+         android:layout_marginTop="56dp"
+-        android:src="@drawable/img1"
++        android:src="@drawable/img01_original"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toStartOf="@+id/startButton"
+         app:layout_constraintStart_toStartOf="parent"
+Index: DHCS_Project/app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- DHCS_Project/app/src/main/AndroidManifest.xml	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/app/src/main/AndroidManifest.xml	(date 1522672197568)
+@@ -6,9 +6,11 @@
+ 
+     <application
+         android:allowBackup="true"
+-        android:icon="@mipmap/ic_launcher"
++        android:hardwareAccelerated="false"
++        android:largeHeap="true"
++        android:icon="@mipmap/logo"
+         android:label="@string/app_name"
+-        android:roundIcon="@mipmap/ic_launcher_round"
++        android:roundIcon="@mipmap/logo"
+         android:supportsRtl="true"
+         android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+ 
+Index: DHCS_Project/app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- DHCS_Project/app/build.gradle	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/app/build.gradle	(date 1522671306647)
+@@ -30,7 +30,7 @@
+     compile 'com.android.support:appcompat-v7:26.1.0'
+     compile 'com.github.bumptech.glide:glide:3.7.0'
+     compile 'de.hdodenhof:circleimageview:2.2.0'
+-    compile 'com.github.cooltechworks:ScratchView:v1.1'
++    implementation 'com.github.cooltechworks:ScratchView:v1.1'
+ }
+ 
+ repositories {
+Index: DHCS_Project/.idea/inspectionProfiles/Project_Default.xml
+===================================================================
+--- DHCS_Project/.idea/inspectionProfiles/Project_Default.xml	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/.idea/inspectionProfiles/Project_Default.xml	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
+@@ -1,6 +0,0 @@
+-<component name="InspectionProjectProfileManager">
+-  <profile version="1.0">
+-    <option name="myName" value="Project Default" />
+-    <inspection_tool class="AndroidLintClickableViewAccessibility" enabled="false" level="WARNING" enabled_by_default="false" />
+-  </profile>
+-</component>
+\ No newline at end of file
+Index: DHCS_Project/.idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- DHCS_Project/.idea/misc.xml	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/.idea/misc.xml	(date 1522662589547)
+@@ -5,11 +5,12 @@
+     <option name="myDefaultNotNull" value="android.support.annotation.NonNull" />
+     <option name="myNullables">
+       <value>
+-        <list size="4">
++        <list size="5">
+           <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
+           <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
+-          <item index="2" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
+-          <item index="3" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
++          <item index="2" class="java.lang.String" itemvalue="javax.annotation.CheckForNull" />
++          <item index="3" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
++          <item index="4" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
+         </list>
+       </value>
+     </option>
+Index: DHCS_Project/.idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- DHCS_Project/.idea/modules.xml	(revision d38e52e4abdeba3d776287515a39e0f38180e0a1)
++++ DHCS_Project/.idea/modules.xml	(date 1522662589560)
+@@ -2,7 +2,7 @@
+ <project version="4">
+   <component name="ProjectModuleManager">
+     <modules>
+-      <module fileurl="file://$PROJECT_DIR$/DHCS_Project.iml" filepath="$PROJECT_DIR$/DHCS_Project.iml" />
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DHCS_Project.iml" filepath="$PROJECT_DIR$/.idea/modules/DHCS_Project.iml" />
+       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+     </modules>
+   </component>
+Index: .idea/codeStyles/Project.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/codeStyles/Project.xml	(date 1522637635634)
++++ .idea/codeStyles/Project.xml	(date 1522637635634)
+@@ -0,0 +1,29 @@
++<component name="ProjectCodeStyleConfiguration">
++  <code_scheme name="Project" version="173">
++    <Objective-C-extensions>
++      <file>
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Import" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Macro" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Typedef" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Enum" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Constant" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Global" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Struct" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="FunctionPredecl" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Function" />
++      </file>
++      <class>
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Property" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Synthesize" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="InitMethod" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="StaticMethod" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="InstanceMethod" />
++        <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="DeallocMethod" />
++      </class>
++      <extensions>
++        <pair source="cpp" header="h" fileNamingConvention="NONE" />
++        <pair source="c" header="h" fileNamingConvention="NONE" />
++      </extensions>
++    </Objective-C-extensions>
++  </code_scheme>
++</component>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(date 1522638215397)
++++ .idea/misc.xml	(date 1522638215397)
+@@ -0,0 +1,28 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="NullableNotNullManager">
++    <option name="myDefaultNullable" value="android.support.annotation.Nullable" />
++    <option name="myDefaultNotNull" value="android.support.annotation.NonNull" />
++    <option name="myNullables">
++      <value>
++        <list size="5">
++          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
++          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
++          <item index="2" class="java.lang.String" itemvalue="javax.annotation.CheckForNull" />
++          <item index="3" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
++          <item index="4" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
++        </list>
++      </value>
++    </option>
++    <option name="myNotNulls">
++      <value>
++        <list size="4">
++          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
++          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nonnull" />
++          <item index="2" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
++          <item index="3" class="java.lang.String" itemvalue="android.support.annotation.NonNull" />
++        </list>
++      </value>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/vcs.xml	(date 1522637062675)
++++ .idea/vcs.xml	(date 1522637062675)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+diff --git DHCS_Project/app/src/main/res/drawable/img1.png DHCS_Project/app/src/main/res/drawable/img1.png
+deleted file mode 100644
+index 812d1391d7361fc1fe427125e5a934130d4442dc..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+Hc$@<O00001
+
+diff --git DHCS_Project/app/src/main/res/drawable/img2.png DHCS_Project/app/src/main/res/drawable/img2.png
+deleted file mode 100644
+index 161051342cf95098af1b11e087c6f477f8db3805..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+Hc$@<O00001
+
+diff --git DHCS_Project/app/src/main/res/drawable/img3.png DHCS_Project/app/src/main/res/drawable/img3.png
+deleted file mode 100644
+index 1f129d6cfb754b35d5bc6c71a51bd358be871fe2..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+Hc$@<O00001
+
+diff --git DHCS_Project/app/src/main/res/drawable/img4.jpg DHCS_Project/app/src/main/res/drawable/img4.jpg
+deleted file mode 100644
+index d8daa5840b68f34ae7a20ec2667f5ac6aa22e88d..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+Hc$@<O00001
+
+diff --git DHCS_Project/app/src/main/res/drawable/img5.jpg DHCS_Project/app/src/main/res/drawable/img5.jpg
+deleted file mode 100644
+index 542401a55b8c2decdfdfc04b6f4278049d3e03c8..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+Hc$@<O00001
+
+diff --git DHCS_Project/app/src/main/res/drawable/img6.jpg DHCS_Project/app/src/main/res/drawable/img6.jpg
+deleted file mode 100644
+index 89d4bde9b10b71d3633a7cf83f260d1968fbaf04..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+Hc$@<O00001
+
+diff --git DHCS_Project/app/src/main/res/drawable/img7.jpg DHCS_Project/app/src/main/res/drawable/img7.jpg
+deleted file mode 100644
+index ee85faefcb83f9377ea1361426ec06a3046a2c23..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+Hc$@<O00001
+
+diff --git DHCS_Project/app/src/main/res/drawable/img8.jpg DHCS_Project/app/src/main/res/drawable/img8.jpg
+deleted file mode 100644
+index f46d932ad257c7eee606c27aeeeffaa295f69793..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+Hc$@<O00001
+
