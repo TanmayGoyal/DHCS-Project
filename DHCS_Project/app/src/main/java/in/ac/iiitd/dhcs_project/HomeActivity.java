@@ -245,11 +245,13 @@ class SharedClass implements Serializable {
     public String[] levelInfo;
     public String[] extraInfo;
     public int[] minImages;
+    public int difficultyLevel;
 
     public SharedClass() {
         score = 0;
         currentLevel = 0;
         maxLevel = 4;
+        difficultyLevel = 0;
 
         levelInfo = new String[maxLevel];
         extraInfo = new String[maxLevel];
@@ -272,8 +274,11 @@ class SharedClass implements Serializable {
     public void incrementCurrentLevel() {
         this.currentLevel++;
 
-        if (currentLevel == maxLevel)
+        if (currentLevel == maxLevel) {
+
             currentLevel = 1;
+            this.difficultyLevel++;
+        }
     }
 
 }

@@ -54,7 +54,7 @@ public class QuestionPageActivity extends AppCompatActivity {
 
         sharedObject.incrementCurrentLevel();
 
-        levelText.setText("Level " + Integer.toString(sharedObject.currentLevel));
+        levelText.setText("Level " + Integer.toString(sharedObject.difficultyLevel*(sharedObject.maxLevel-1) + sharedObject.currentLevel));
         levelInformation.setText(sharedObject.levelInfo[sharedObject.currentLevel]);
     }
     private SharedClass getObject() {

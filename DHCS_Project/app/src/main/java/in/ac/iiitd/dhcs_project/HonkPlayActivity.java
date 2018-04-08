@@ -16,6 +16,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +32,7 @@ import java.io.InputStream;
 import java.util.Random;
 
 public class HonkPlayActivity extends AppCompatActivity {
+    private static final String TAG = "HonkPlayActivity";
 
     private Integer images[] = {R.drawable.img01_original, R.drawable.img02_original, R.drawable.img03_original, R.drawable.img04_original, R.drawable.img05_original, R.drawable.img06_original, R.drawable.img07_original, R.drawable.img08_original, R.drawable.img09_original};
     private Integer labels[] = {R.drawable.img01_label, R.drawable.img02_label, R.drawable.img03_label, R.drawable.img04_label, R.drawable.img05_label, R.drawable.img06_label, R.drawable.img07_label, R.drawable.img08_label, R.drawable.img09_label};
@@ -42,6 +50,11 @@ public class HonkPlayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_honk_play);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference("message");
+
+        databaseReference.setValue("Hello World!");
 
         rand = new Random();
         currImage = rand.nextInt(9);
@@ -164,7 +177,11 @@ public class HonkPlayActivity extends AppCompatActivity {
 
     private void setCurrentImage() {
         final ImageView imageView = findViewById(R.id.imageDisplay);
-        imageView.setImageResource(images[currImage]);
+//        imageView.setImageResource(images[currImage]);
+//        Log.i(TAG, storageReference.toString());
+        Glide.with(this)
+                .load(images[currImage])
+                .into(imageView);
     }
 
     private void addToast(String value) {
