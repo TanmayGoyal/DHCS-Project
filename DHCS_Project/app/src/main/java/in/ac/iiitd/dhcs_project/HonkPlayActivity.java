@@ -61,7 +61,6 @@ public class HonkPlayActivity extends AppCompatActivity {
 
         setAnswers();
         setCurrentImage();
-        setImageRotateListener();
 
         class ProgressBarTimer extends CountDownTimer {
             private ProgressBar progressBar;
@@ -83,7 +82,7 @@ public class HonkPlayActivity extends AppCompatActivity {
                 progressBar.setProgress(0);
                 finish = 1;
                 SharedClass obj = getObject();
-                if (correctAnswers >= 0) {
+                if (correctAnswers >= obj.difficultyLevel+1) {
                     finish();
                     startQuestionActivity(obj);
                 }
@@ -105,7 +104,7 @@ public class HonkPlayActivity extends AppCompatActivity {
             }
         }
 
-        ProgressBarTimer progressBarTimer;
+        final ProgressBarTimer progressBarTimer;
         progressBar = findViewById(R.id.progressBar);
         progressBar.setProgress(100);
         progressBarTimer = new ProgressBarTimer(10000, 1, progressBar);
@@ -116,7 +115,44 @@ public class HonkPlayActivity extends AppCompatActivity {
                 numOfClicks++;
             }
         });
+
+
+        final Button rotateButton = findViewById(R.id.go);
+        rotateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+
+                if (String.valueOf(numOfClicks).equals(answers[currImage])) {
+                    setNewImage();
+                    addToast("Correct Answer");
+                    correctAnswers++;
+                }
+
+                else {
+                    progressBarTimer.cancel();
+                    AlertDialog alertDialog;
+                    alertDialog = new AlertDialog.Builder(HonkPlayActivity.this).create();
+                    alertDialog.setTitle("Wrong Answer");
+                    alertDialog.setMessage("Sorry, You Lost!");
+                    alertDialog.setIcon(R.drawable.wrong);
+                    alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(HonkPlayActivity.this, HomeActivity.class);
+                            finish();
+                            startActivity(intent);
+                        }
+                    });
+                    alertDialog.show();
+                }
+                numOfClicks = 0;
+                setCurrentImage();
+            }
+        });
+
         progressBarTimer.start();
+
+
+
     }
 
     private SharedClass getObject() {
@@ -131,41 +167,6 @@ public class HonkPlayActivity extends AppCompatActivity {
 
         startActivity(intent);
 
-    }
-
-    private void setImageRotateListener() {
-        final Button rotateButton = findViewById(R.id.go);
-        rotateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-
-                if (String.valueOf(numOfClicks).equals(answers[currImage])) {
-                    setNewImage();
-                    addToast("Correct Answer");
-                    correctAnswers++;
-                }
-
-                else {
-                    setNewImage();
-                    /*
-                    AlertDialog alertDialog;
-                    alertDialog = new AlertDialog.Builder(HonkPlayActivity.this).create();
-                    alertDialog.setTitle("Wrong Answer");
-                    alertDialog.setMessage("Sorry, You Lost!");
-                    alertDialog.setIcon(R.drawable.wrong);
-                    alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(HonkPlayActivity.this, HomeActivity.class);
-                            finish();
-                            startActivity(intent);
-                        }
-                    });
-                    alertDialog.show();*/
-                }
-                numOfClicks = 0;
-                setCurrentImage();
-            }
-        });
     }
 
     private void setNewImage() {
