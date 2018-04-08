@@ -9,24 +9,26 @@
 
     <Button
         android:id="@+id/optionButton4"
-        android:layout_width="143dp"
-        android:layout_height="74dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_marginBottom="24dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginLeft="432dp"
+        android:layout_marginRight="16dp"
         android:layout_marginStart="432dp"
         android:text="4"
         android:theme="@style/StartButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/optionButton3"
-        android:layout_marginLeft="432dp"
-        android:layout_marginRight="16dp" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <com.cooltechworks.views.ScratchImageView
         android:id="@+id/sample_image"
-        android:layout_width="402dp"
-        android:layout_height="290dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_margin="10dp"
         android:layout_marginBottom="84dp"
         android:layout_marginEnd="21dp"
@@ -36,60 +38,68 @@
         android:layout_marginTop="72dp"
         android:layout_weight="7"
         android:background="@android:color/background_dark"
-        android:src="@drawable/img01_original"
         android:scaleType="centerCrop"
+        android:src="@drawable/img01_original"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/optionButton4"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.903" />
 
     <Button
         android:id="@+id/optionButton2"
-        android:layout_width="143dp"
-        android:layout_height="74dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_marginBottom="172dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginLeft="432dp"
+        android:layout_marginRight="16dp"
         android:layout_marginStart="432dp"
         android:text="1"
         android:theme="@style/StartButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/optionButton1"
-        android:layout_marginLeft="432dp"
-        android:layout_marginRight="16dp" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/optionButton3"
-        android:layout_width="143dp"
-        android:layout_height="74dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_marginBottom="92dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginLeft="432dp"
+        android:layout_marginRight="16dp"
         android:layout_marginStart="432dp"
         android:text="2"
         android:theme="@style/StartButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/optionButton2"
-        android:layout_marginLeft="432dp"
-        android:layout_marginRight="16dp" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/optionButton1"
-        android:layout_width="143dp"
-        android:layout_height="81dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_marginBottom="256dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginLeft="432dp"
+        android:layout_marginRight="16dp"
         android:layout_marginStart="432dp"
         android:layout_marginTop="57dp"
         android:text="3"
         android:theme="@style/StartButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginLeft="432dp"
-        android:layout_marginRight="16dp" />
+        app:layout_constraintVertical_bias="1.0" />
 
 </android.support.constraint.ConstraintLayout>
