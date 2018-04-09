@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -46,6 +47,9 @@ public class TapPlayActivity extends AppCompatActivity {
     private int score = 0;
     private boolean isCorrect = false;
     private int correctAnswers = 0;
+
+    private MediaPlayer mp;
+
     ProgressBar progressBar;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -75,10 +79,12 @@ public class TapPlayActivity extends AppCompatActivity {
                 int redValue = Color.red(pixel);
                 if (redValue == 26) {
                     score++;
-                    addToast("CORRECT");
+                    mp = MediaPlayer.create(TapPlayActivity.this, R.raw.car_honk);
+                    mp.start();
+                    //addToast("CORRECT");
                 }
                 else {
-                    addToast("WRONG");
+                    //addToast("WRONG");
                 }
                 if (String.valueOf(score).equals(answers[currImage]) || score >= 1) isCorrect = true;
                 return false;
@@ -168,6 +174,8 @@ public class TapPlayActivity extends AppCompatActivity {
                     });
                     alertDialog.show();
                 }
+                mp.release();
+                mp = null;
             }
         });
         progressBarTimer.start();

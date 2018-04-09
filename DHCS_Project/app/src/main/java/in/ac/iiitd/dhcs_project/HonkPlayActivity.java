@@ -45,6 +45,8 @@ public class HonkPlayActivity extends AppCompatActivity {
     private int numOfClicks = 0;
     private int correctAnswers = 0;
 
+    private MediaPlayer mp;
+
     ProgressBar progressBar;
 
     @Override
@@ -120,6 +122,8 @@ public class HonkPlayActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 numOfClicks++;
+                mp = MediaPlayer.create(HonkPlayActivity.this, R.raw.car_honk);
+                mp.start();
             }
         });
 
@@ -159,6 +163,8 @@ public class HonkPlayActivity extends AppCompatActivity {
                 }
                 numOfClicks = 0;
                 setCurrentImage();
+                mp.release();
+                mp = null;
             }
         });
 
