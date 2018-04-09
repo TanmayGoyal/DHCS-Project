@@ -7,6 +7,21 @@
     android:background="@drawable/background"
     tools:context="in.ac.iiitd.dhcs_project.ScratchPlayActivity">
 
+    <TextView
+        android:id="@+id/scoreTextBox3"
+        android:layout_width="75dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Score: "
+        android:textAlignment="center"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sample_image"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/optionButton4"
         android:layout_width="75dp"

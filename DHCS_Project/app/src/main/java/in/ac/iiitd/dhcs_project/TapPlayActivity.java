@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -52,6 +53,7 @@ public class TapPlayActivity extends AppCompatActivity {
 
         setAnswers();
         setCurrentImage();
+        final SharedClass obj = getObject();
 
         final ImageView imageView = findViewById(R.id.imageView);
         rand = new Random();
@@ -74,6 +76,10 @@ public class TapPlayActivity extends AppCompatActivity {
 
         });
 
+
+        final TextView scoreText = findViewById(R.id.scoreTextBox2);
+        scoreText.setText("Score: " + Integer.toString(obj.score));
+
         class ProgressBarTimer extends CountDownTimer {
             ProgressBar progressBar;
             int finish = 0;
@@ -90,7 +96,6 @@ public class TapPlayActivity extends AppCompatActivity {
             public void onFinish() {
                 progressBar.setProgress(0);
                 finish = 1;
-                final SharedClass obj = getObject();
 
                 if (correctAnswers >= obj.difficultyLevel+1) {
                     finish();
@@ -117,7 +122,7 @@ public class TapPlayActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         progressBar.setProgress(100);
         final ProgressBarTimer progressBarTimer = new ProgressBarTimer(10000, 1, progressBar);
-        final SharedClass obj = getObject();
+//        final SharedClass obj = getObject();
         final Button startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,6 +132,9 @@ public class TapPlayActivity extends AppCompatActivity {
                     correctAnswers++;
                     setNewImage();
                     setCurrentImage();
+                    obj.incrementScore();
+                    scoreText.setText("Score: " + Integer.toString(obj.score));
+
 
                 }
                 else {

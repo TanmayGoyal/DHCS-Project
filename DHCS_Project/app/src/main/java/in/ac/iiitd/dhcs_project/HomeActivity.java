@@ -281,4 +281,8 @@ class SharedClass implements Serializable {
         }
     }
 
+    public void incrementScore() {
+        this.score+=10;
+    }
+
 }

@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -55,6 +56,10 @@ public class HonkPlayActivity extends AppCompatActivity {
         DatabaseReference databaseReference = database.getReference("message");
 
         databaseReference.setValue("Hello World!");
+        final SharedClass obj = getObject();
+
+        final TextView scoreText = findViewById(R.id.scoreTextBox1);
+        scoreText.setText("Score: " + Integer.toString(obj.score));
 
         rand = new Random();
         currImage = rand.nextInt(9);
@@ -81,7 +86,7 @@ public class HonkPlayActivity extends AppCompatActivity {
             public void onFinish() {
                 progressBar.setProgress(0);
                 finish = 1;
-                SharedClass obj = getObject();
+
                 if (correctAnswers >= obj.difficultyLevel+1) {
                     finish();
                     startQuestionActivity(obj);
@@ -126,6 +131,10 @@ public class HonkPlayActivity extends AppCompatActivity {
                     setNewImage();
                     addToast("Correct Answer");
                     correctAnswers++;
+
+                    obj.incrementScore();
+                    scoreText.setText("Score: " + Integer.toString(obj.score));
+
                 }
 
                 else {

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -38,6 +39,10 @@ public class ScratchPlayActivity extends AppCompatActivity {
         setAnswers();
         rand = new Random();
         currImage = rand.nextInt(9);
+        final SharedClass obj = getObject();
+
+        final TextView scoreText = findViewById(R.id.scoreTextBox3);
+        scoreText.setText("Score: " + Integer.toString(obj.score));
 
         final ImageView imageView = (ImageView) findViewById(R.id.sample_image);
         imageView.setImageResource(images[currImage]);
@@ -53,7 +58,6 @@ public class ScratchPlayActivity extends AppCompatActivity {
         button3.setText(String.valueOf(trueAnswer - 1));
         button4.setText(String.valueOf(trueAnswer + 2));
 
-        final SharedClass obj = getObject();
 
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +84,10 @@ public class ScratchPlayActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(ScratchPlayActivity.this, "CORRECT", Toast.LENGTH_SHORT).show();
                 finish();
+
                 startQuestionActivity(obj);
+
+
             }
         });
 
