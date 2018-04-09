@@ -1,6 +1,8 @@
 package in.ac.iiitd.dhcs_project;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -46,18 +48,20 @@ public class TapPlayActivity extends AppCompatActivity {
     private int correctAnswers = 0;
     ProgressBar progressBar;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tap_play);
 
+        rand = new Random();
+        currImage = rand.nextInt(9);
+
         setAnswers();
-        setCurrentImage();
+//        setCurrentImage();
         final SharedClass obj = getObject();
 
         final ImageView imageView = findViewById(R.id.imageView);
-        rand = new Random();
-        currImage = rand.nextInt(3);
         imageView.setImageResource(images[currImage]);
         bm = BitmapFactory.decodeResource(getResources(), labels[currImage]);
 
@@ -65,10 +69,17 @@ public class TapPlayActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int x = (int)event.getX(), y = (int)event.getY();
-                float scaleHeight = (float) imageView.getDrawable().getIntrinsicHeight() / imageView.getMeasuredHeight(), scaleWidth = (float) imageView.getDrawable().getIntrinsicWidth() / imageView.getMeasuredWidth();
+                float scaleHeight = (float) imageView.getDrawable().getIntrinsicHeight() / imageView.getHeight();
+                float scaleWidth = (float) imageView.getDrawable().getIntrinsicWidth() / imageView.getWidth();
                 int pixel = bm.getPixel((int)(scaleWidth * x),(int)(scaleHeight * y));
                 int redValue = Color.red(pixel);
-                if (redValue == 26) score++;
+                if (redValue == 26) {
+                    score++;
+                    addToast("CORRECT");
+                }
+                else {
+                    addToast("WRONG");
+                }
                 if (String.valueOf(score).equals(answers[currImage]) || score >= 1) isCorrect = true;
                 return false;
             }
@@ -107,6 +118,8 @@ public class TapPlayActivity extends AppCompatActivity {
                     alertDialog.setTitle("Wrong Answer");
                     alertDialog.setMessage("Sorry, You Lost!");
                     alertDialog.setIcon(R.drawable.wrong);
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.setCancelable(false);
                     alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(TapPlayActivity.this, HomeActivity.class);
@@ -144,6 +157,8 @@ public class TapPlayActivity extends AppCompatActivity {
                     alertDialog.setTitle("Wrong Answer");
                     alertDialog.setMessage("Sorry, You Lost!");
                     alertDialog.setIcon(R.drawable.wrong);
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.setCancelable(false);
                     alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(TapPlayActivity.this, HomeActivity.class);
@@ -232,4 +247,10 @@ public class TapPlayActivity extends AppCompatActivity {
                 .into(imageView);
     }
 
+    private void addToast(String value) {
+        CharSequence text = value;
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast.makeText(context, text, duration).show();
+    }
 }

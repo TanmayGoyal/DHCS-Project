@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.cooltechworks.utils.BitmapUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +28,10 @@ public class ScratchPlayActivity extends AppCompatActivity {
     private Integer labels[] = {R.drawable.img01_label, R.drawable.img02_label, R.drawable.img03_label, R.drawable.img04_label, R.drawable.img05_label, R.drawable.img06_label, R.drawable.img07_label, R.drawable.img08_label, R.drawable.img09_label};
     private int currImage;
 
+    SharedClass obj;
+    TextView scoreText;
+
+
     Random rand;
 
     private String answers[] = new  String[9];
@@ -38,10 +43,13 @@ public class ScratchPlayActivity extends AppCompatActivity {
 
         setAnswers();
         rand = new Random();
-        currImage = rand.nextInt(9);
-        final SharedClass obj = getObject();
+        int randButton = (rand.nextInt() % 4) + 1;
 
-        final TextView scoreText = findViewById(R.id.scoreTextBox3);
+        currImage = rand.nextInt(9);
+
+
+        obj = getObject();
+        scoreText = findViewById(R.id.scoreTextBox3);
         scoreText.setText("Score: " + Integer.toString(obj.score));
 
         final ImageView imageView = (ImageView) findViewById(R.id.sample_image);
@@ -53,83 +61,148 @@ public class ScratchPlayActivity extends AppCompatActivity {
         Button button4 = findViewById(R.id.optionButton4);
 
         int trueAnswer = Integer.parseInt(answers[currImage]);
-        button2.setText(String.valueOf(trueAnswer));
-        button1.setText(String.valueOf(trueAnswer + 1));
-        button3.setText(String.valueOf(trueAnswer - 1));
-        button4.setText(String.valueOf(trueAnswer + 2));
+
+        setButtons(button1, button2, button3, button4, randButton, trueAnswer);
+    }
 
 
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Toast.makeText(ScratchPlayActivity.this, "WRONG", Toast.LENGTH_SHORT).show();
-                AlertDialog alertDialog;
-                alertDialog = new AlertDialog.Builder(ScratchPlayActivity.this).create();
-                alertDialog.setTitle("Wrong Answer");
-                alertDialog.setMessage("Sorry, You Lost!");
-                alertDialog.setIcon(R.drawable.wrong);
-                alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(ScratchPlayActivity.this, HomeActivity.class);
-                        finish();
-                        startActivity(intent);
-                    }
-                });
-                alertDialog.show();
-            }
-        });
-
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(ScratchPlayActivity.this, "CORRECT", Toast.LENGTH_SHORT).show();
-                finish();
-
-                startQuestionActivity(obj);
-
-
-            }
-        });
-
-        button3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Toast.makeText(ScratchPlayActivity.this, "WRONG", Toast.LENGTH_SHORT).show();
-                AlertDialog alertDialog;
-                alertDialog = new AlertDialog.Builder(ScratchPlayActivity.this).create();
-                alertDialog.setTitle("Wrong Answer");
-                alertDialog.setMessage("Sorry, You Lost!");
-                alertDialog.setIcon(R.drawable.wrong);
-                alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(ScratchPlayActivity.this, HomeActivity.class);
-                        finish();
-                        startActivity(intent);
-                    }
-                });
-                alertDialog.show();
-            }
-        });
-
-        button4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Toast.makeText(ScratchPlayActivity.this, "WRONG", Toast.LENGTH_SHORT).show();
-                AlertDialog alertDialog;
-                alertDialog = new AlertDialog.Builder(ScratchPlayActivity.this).create();
-                alertDialog.setTitle("Wrong Answer");
-                alertDialog.setMessage("Sorry, You Lost!");
-                alertDialog.setIcon(R.drawable.wrong);
-                alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(ScratchPlayActivity.this, HomeActivity.class);
-                        finish();
-                        startActivity(intent);
-                    }
-                });
-                alertDialog.show();
-            }
-        });
+    private void setButtons(Button but1, Button but2, Button but3, Button but4, int randomButton, int trueAns) {
+        if (randomButton == 1) {
+            but1.setText(String.valueOf(trueAns));
+            but2.setText(String.valueOf(trueAns - 1));
+            but3.setText(String.valueOf(trueAns + 2));
+            but4.setText(String.valueOf(trueAns + 1));
+            but1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(ScratchPlayActivity.this, "CORRECT", Toast.LENGTH_SHORT).show();
+                    obj.incrementScore();
+                    scoreText.setText("Score:" + Integer.toString(obj.score));
+                    startQuestionActivity(obj);
+                    finish();
+                }
+            });
+            but2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getAlertDialog();
+                }
+            });
+            but3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getAlertDialog();
+                }
+            });
+            but4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getAlertDialog();
+                }
+            });
+        }
+        else if(randomButton == 2) {
+            but1.setText(String.valueOf(trueAns - 1));
+            but2.setText(String.valueOf(trueAns));
+            but3.setText(String.valueOf(trueAns + 2));
+            but4.setText(String.valueOf(trueAns + 1));
+            but2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(ScratchPlayActivity.this, "CORRECT", Toast.LENGTH_SHORT).show();
+                    obj.incrementScore();
+                    scoreText.setText("Score:" + Integer.toString(obj.score));
+                    startQuestionActivity(obj);
+                    finish();
+                }
+            });
+            but1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getAlertDialog();
+                }
+            });
+            but3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getAlertDialog();
+                }
+            });
+            but4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getAlertDialog();
+                }
+            });
+        }
+        else if(randomButton == 3) {
+            but1.setText(String.valueOf(trueAns + 2));
+            but2.setText(String.valueOf(trueAns - 1));
+            but3.setText(String.valueOf(trueAns));
+            but4.setText(String.valueOf(trueAns + 1));
+            but3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(ScratchPlayActivity.this, "CORRECT", Toast.LENGTH_SHORT).show();
+                    obj.incrementScore();
+                    scoreText.setText("Score:" + Integer.toString(obj.score));
+                    startQuestionActivity(obj);
+                    finish();
+                }
+            });
+            but1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getAlertDialog();
+                }
+            });
+            but2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getAlertDialog();
+                }
+            });
+            but4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getAlertDialog();
+                }
+            });
+        }
+        else if(randomButton == 4) {
+            but1.setText(String.valueOf(trueAns - 1));
+            but2.setText(String.valueOf(trueAns + 1));
+            but3.setText(String.valueOf(trueAns + 2));
+            but4.setText(String.valueOf(trueAns));
+            but4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(ScratchPlayActivity.this, "CORRECT", Toast.LENGTH_SHORT).show();
+                    obj.incrementScore();
+                    scoreText.setText("Score:" + Integer.toString(obj.score));
+                    startQuestionActivity(obj);
+                    finish();
+                }
+            });
+            but1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getAlertDialog();
+                }
+            });
+            but2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getAlertDialog();
+                }
+            });
+            but3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getAlertDialog();
+                }
+            });
+        }
     }
 
     private SharedClass getObject() {
@@ -203,5 +276,23 @@ public class ScratchPlayActivity extends AppCompatActivity {
         Glide.with(this)
                 .load(images[currImage])
                 .into(imageView);
+    }
+
+    private void getAlertDialog() {
+        AlertDialog alertDialog;
+        alertDialog = new AlertDialog.Builder(ScratchPlayActivity.this).create();
+        alertDialog.setTitle("Wrong Answer");
+        alertDialog.setMessage("Sorry, You Lost!");
+        alertDialog.setIcon(R.drawable.wrong);
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setCancelable(false);
+        alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(ScratchPlayActivity.this, HomeActivity.class);
+                finish();
+                startActivity(intent);
+            }
+        });
+        alertDialog.show();
     }
 }

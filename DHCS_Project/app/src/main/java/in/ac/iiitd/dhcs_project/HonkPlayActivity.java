@@ -97,6 +97,8 @@ public class HonkPlayActivity extends AppCompatActivity {
                     alertDialog.setTitle("Wrong Answer");
                     alertDialog.setMessage("Sorry, You Lost!");
                     alertDialog.setIcon(R.drawable.wrong);
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.setCancelable(false);
                     alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(HonkPlayActivity.this, HomeActivity.class);
@@ -144,6 +146,8 @@ public class HonkPlayActivity extends AppCompatActivity {
                     alertDialog.setTitle("Wrong Answer");
                     alertDialog.setMessage("Sorry, You Lost!");
                     alertDialog.setIcon(R.drawable.wrong);
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.setCancelable(false);
                     alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(HonkPlayActivity.this, HomeActivity.class);
