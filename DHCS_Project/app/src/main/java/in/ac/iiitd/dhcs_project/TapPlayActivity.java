@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,13 +42,17 @@ public class TapPlayActivity extends AppCompatActivity {
     Random rand;
     private int score = 0;
     private boolean isCorrect = false;
+    private int correctAnswers = 0;
     ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tap_play);
+
         setAnswers();
+        setCurrentImage();
+
         final ImageView imageView = findViewById(R.id.imageView);
         rand = new Random();
         currImage = rand.nextInt(3);
@@ -86,7 +92,7 @@ public class TapPlayActivity extends AppCompatActivity {
                 finish = 1;
                 final SharedClass obj = getObject();
 
-                if (isCorrect) {
+                if (correctAnswers >= obj.difficultyLevel+1) {
                     finish();
                     startQuestionActivity(obj);
                 }
@@ -110,16 +116,21 @@ public class TapPlayActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setProgress(100);
-        ProgressBarTimer progressBarTimer = new ProgressBarTimer(10000, 1, progressBar);
+        final ProgressBarTimer progressBarTimer = new ProgressBarTimer(10000, 1, progressBar);
         final SharedClass obj = getObject();
         final Button startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (isCorrect) {
-                    startQuestionActivity(obj);
+//                    startQuestionActivity(obj);
+                    correctAnswers++;
+                    setNewImage();
+                    setCurrentImage();
+
                 }
                 else {
+                    progressBarTimer.cancel();
                     AlertDialog alertDialog;
                     alertDialog = new AlertDialog.Builder(TapPlayActivity.this).create();
                     alertDialog.setTitle("Wrong Answer");
@@ -195,6 +206,22 @@ public class TapPlayActivity extends AppCompatActivity {
             return null;
         }
         return json;
+    }
+
+    private void setNewImage() {
+        int prevcurrImage = currImage;
+        while (prevcurrImage == currImage) {
+            currImage = rand.nextInt(9);
+        }
+    }
+
+    private void setCurrentImage() {
+        final ImageView imageView = findViewById(R.id.imageView);
+//        imageView.setImageResource(images[currImage]);
+//        Log.i(TAG, storageReference.toString());
+        Glide.with(this)
+                .load(images[currImage])
+                .into(imageView);
     }
 
 }

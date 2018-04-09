@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -178,5 +180,21 @@ public class ScratchPlayActivity extends AppCompatActivity {
             return null;
         }
         return json;
+    }
+
+    private void setNewImage() {
+        int prevcurrImage = currImage;
+        while (prevcurrImage == currImage) {
+            currImage = rand.nextInt(9);
+        }
+    }
+
+    private void setCurrentImage() {
+        final ImageView imageView = findViewById(R.id.imageDisplay);
+//        imageView.setImageResource(images[currImage]);
+//        Log.i(TAG, storageReference.toString());
+        Glide.with(this)
+                .load(images[currImage])
+                .into(imageView);
     }
 }
