@@ -1,4 +1,4 @@
-<resources>
+ <resources>
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -22,7 +22,7 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
     <style name="StartButton" parent="Theme.AppCompat">
-        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="colorButtonNormal">#448AFF</item>
         <item name="colorControlHighlight">@color/colorAccent</item>
     </style>
 

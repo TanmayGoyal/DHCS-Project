@@ -7,6 +7,27 @@
     android:background="@drawable/background"
     tools:context="in.ac.iiitd.dhcs_project.QuestionPageActivity">
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="55dp"
+        android:layout_height="46dp"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/info_icon"
+        android:theme="@style/StartButton"
+        app:backgroundTint="#448AFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
     <TextView
         android:id="@+id/levelText"
         android:layout_width="400dp"
@@ -17,35 +38,40 @@
         android:fontFamily="serif"
         android:gravity="center"
         android:textColor="@android:color/white"
-        android:textSize="60sp"
+        android:textSize="48sp"
         android:textStyle="bold"
+        android:typeface="serif"
+        app:fontFamily="@font/bree_serif"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/levelInformation"
-        android:layout_width="600dp"
-        android:layout_height="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif"
         android:gravity="center"
         android:textColor="@android:color/background_light"
         android:textSize="50sp"
-        android:fontFamily="sans-serif"
+        android:typeface="normal"
+        app:fontFamily="@font/open_sans_semibold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.499"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/levelText"
-        app:layout_constraintVertical_bias="0.294" />
+        app:layout_constraintVertical_bias="0.267" />
 
     <Button
         android:id="@+id/StartButton"
         android:layout_width="181dp"
         android:layout_height="74dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -54,5 +80,22 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/levelInformation" />
+        app:layout_constraintTop_toBottomOf="@+id/levelInformation"
+        app:layout_constraintVertical_bias="0.847" />
+
+    <VideoView
+        android:id="@+id/videoView3"
+        android:layout_width="442dp"
+        android:layout_height="239dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

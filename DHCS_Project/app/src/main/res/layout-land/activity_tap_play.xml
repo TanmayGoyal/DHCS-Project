@@ -35,18 +35,20 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="556dp"
-        android:layout_height="286dp"
-        android:layout_marginBottom="78dp"
-        android:layout_marginEnd="14dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="14dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="56dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="108dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="108dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="96dp"
+        android:layout_weight="5"
+        android:src="@drawable/aachen_000018_000019_original"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/startButton"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/startButton"

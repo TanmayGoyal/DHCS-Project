@@ -7,22 +7,6 @@
     android:background="@drawable/background"
     tools:context="in.ac.iiitd.dhcs_project.HonkPlayActivity">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="end|bottom"
-        android:layout_marginEnd="3dp"
-        android:layout_marginRight="3dp"
-        android:layout_marginTop="328dp"
-        android:src="@drawable/info_icon"
-        app:backgroundTint="@color/common_google_signin_btn_text_dark_default"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageDisplay"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
@@ -31,25 +15,25 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="8dp" />
 
     <ImageView
         android:id="@+id/imageDisplay"
-        android:layout_width="568dp"
-        android:layout_height="299dp"
-        android:layout_marginBottom="24dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="108dp"
-        android:layout_marginLeft="24dp"
+        android:layout_marginLeft="12dp"
         android:layout_marginRight="108dp"
-        android:layout_marginStart="24dp"
-
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="96dp"
         android:layout_weight="5"
-        android:src="@drawable/img01_original"
+        android:src="@drawable/aachen_000018_000019_original"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/honkButton"
@@ -60,11 +44,12 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="12dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="96dp"
         android:text="Honk"
         android:theme="@style/StartButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageDisplay"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
@@ -73,7 +58,7 @@
         android:id="@+id/go"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="64dp"
+        android:layout_marginBottom="32dp"
         android:layout_marginEnd="12dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="12dp"
@@ -83,8 +68,10 @@
         android:theme="@style/StartButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageDisplay"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/scoreTextBox1"

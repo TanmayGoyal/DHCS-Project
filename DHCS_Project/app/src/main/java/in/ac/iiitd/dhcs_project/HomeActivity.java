@@ -1,5 +1,7 @@
 package in.ac.iiitd.dhcs_project;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -71,6 +73,34 @@ public class HomeActivity extends AppCompatActivity
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
         // [END customize_button]
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to exit?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(Intent.ACTION_MAIN);
+                        intent.addCategory(Intent.CATEGORY_HOME);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finishAndRemoveTask();
+                        System.exit(0);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.setCanceledOnTouchOutside(false);
+        alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
+        alert.show();
     }
 
     @Override
@@ -262,9 +292,9 @@ class SharedClass implements Serializable {
         minImages[2] = 1;
         minImages[3] = 1;
 
-        levelInfo[1] = "Honk Once per Car!";
-        levelInfo[2] = "Tap on all on Cars in the Image!";
-        levelInfo[3] = "Scratch the Image to find the Cars!";
+        levelInfo[1] = "Honk once per car!";
+        levelInfo[2] = "Tap on all the cars!";
+        levelInfo[3] = "Scratch to find the cars!";
 
         extraInfo[1] = "Press the horn as many number of cars in the image.";
         extraInfo[2] = "Tap on as many number of cars present in the image.";

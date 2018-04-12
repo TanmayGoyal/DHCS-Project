@@ -34,13 +34,29 @@ import java.io.InputStream;
 import java.util.Random;
 
 public class TapPlayActivity extends AppCompatActivity {
+    private static final String TAG = "TapPlayActivity";
     private Bitmap bm;
 
-    private Integer images[] = {R.drawable.img01_original, R.drawable.img02_original, R.drawable.img03_original, R.drawable.img04_original, R.drawable.img05_original, R.drawable.img06_original, R.drawable.img07_original, R.drawable.img08_original, R.drawable.img09_original};
-    private Integer labels[] = {R.drawable.img01_label, R.drawable.img02_label, R.drawable.img03_label, R.drawable.img04_label, R.drawable.img05_label, R.drawable.img06_label, R.drawable.img07_label, R.drawable.img08_label, R.drawable.img09_label};
+    private Integer images[] = {R.drawable.aachen_000018_000019_original, R.drawable.aachen_000036_000019_original, R.drawable.aachen_000098_000019_original, R.drawable.aachen_000105_000019_original, R.drawable.aachen_000156_000019_original, R.drawable.aachen_000164_000019_original, R.drawable.aachen_000173_000019_original,
+            R.drawable.bochum_000000_006026_original, R.drawable.bochum_000000_026634_original, R.drawable.bochum_000000_027057_original, R.drawable.bremen_000001_000019_original, R.drawable.bremen_000004_000019_original, R.drawable.bremen_000025_000019_original, R.drawable.bremen_000030_000019_original, R.drawable.bremen_000031_000019_original,
+            R.drawable.bremen_000035_000019_original, R.drawable.bremen_000041_000019_original, R.drawable.bremen_000049_000019_original, R.drawable.bremen_000053_000019_original, R.drawable.bremen_000065_000019_original, R.drawable.bremen_000073_000019_original, R.drawable.bremen_000157_000019_original, R.drawable.cologne_000021_000019_original,
+            R.drawable.cologne_000030_000019_original, R.drawable.cologne_000032_000019_original, R.drawable.darmstadt_000012_000019_original, R.drawable.dusseldorf_000011_000019_original, R.drawable.dusseldorf_000016_000019_original, R.drawable.dusseldorf_000088_000019_original, R.drawable.dusseldorf_000133_000019_original, R.drawable.erfurt_000004_000019_original,
+            R.drawable.erfurt_000014_000019_original, R.drawable.erfurt_000019_000019_original, R.drawable.erfurt_000031_000019_original, R.drawable.erfurt_000045_000019_original, R.drawable.erfurt_000058_000019_original};
 
-    private static final String TAG = "TapPlayActivity";
-    private String answers[] = new  String[9];
+    private Integer labels[] = {R.drawable.aachen_000018_000019_label, R.drawable.aachen_000036_000019_label, R.drawable.aachen_000098_000019_label, R.drawable.aachen_000105_000019_label, R.drawable.aachen_000156_000019_label, R.drawable.aachen_000164_000019_label, R.drawable.aachen_000173_000019_label,
+            R.drawable.bochum_000000_006026_label, R.drawable.bochum_000000_026634_label, R.drawable.bochum_000000_027057_label, R.drawable.bremen_000001_000019_label, R.drawable.bremen_000004_000019_label, R.drawable.bremen_000025_000019_label, R.drawable.bremen_000030_000019_label, R.drawable.bremen_000031_000019_label,
+            R.drawable.bremen_000035_000019_label, R.drawable.bremen_000041_000019_label, R.drawable.bremen_000049_000019_label, R.drawable.bremen_000053_000019_label, R.drawable.bremen_000065_000019_label, R.drawable.bremen_000073_000019_label, R.drawable.bremen_000157_000019_label, R.drawable.cologne_000021_000019_label,
+            R.drawable.cologne_000030_000019_label, R.drawable.cologne_000032_000019_label, R.drawable.darmstadt_000012_000019_label, R.drawable.dusseldorf_000011_000019_label, R.drawable.dusseldorf_000016_000019_label, R.drawable.dusseldorf_000088_000019_label, R.drawable.dusseldorf_000133_000019_label, R.drawable.erfurt_000004_000019_label,
+            R.drawable.erfurt_000014_000019_label, R.drawable.erfurt_000019_000019_label, R.drawable.erfurt_000031_000019_label, R.drawable.erfurt_000045_000019_label, R.drawable.erfurt_000058_000019_label};
+
+    private String assets[] = {"aachen_000018_000019.json", "aachen_000036_000019.json", "aachen_000098_000019.json", "aachen_000105_000019.json", "aachen_000156_000019.json", "aachen_000164_000019.json", "aachen_000173_000019.json",
+            "bochum_000000_006026.json", "bochum_000000_026634.json", "bochum_000000_027057.json", "bremen_000001_000019.json", "bremen_000004_000019.json", "bremen_000025_000019.json", "bremen_000030_000019.json", "bremen_000031_000019.json",
+            "bremen_000035_000019.json", "bremen_000041_000019.json", "bremen_000049_000019.json", "bremen_000053_000019.json", "bremen_000065_000019.json", "bremen_000073_000019.json", "bremen_000157_000019.json", "cologne_000021_000019.json",
+            "cologne_000030_000019.json", "cologne_000032_000019.json", "darmstadt_000012_000019.json", "dusseldorf_000011_000019.json", "dusseldorf_000016_000019.json", "dusseldorf_000088_000019.json", "dusseldorf_000133_000019.json", "erfurt_000004_000019.json",
+            "erfurt_000014_000019.json", "erfurt_000019_000019.json", "erfurt_000031_000019.json", "erfurt_000045_000019.json", "erfurt_000058_000019.json"};
+
+    final private int totalImages = 36;
+    private String answers[] = new  String[totalImages];
 
     private int currImage;
     Random rand;
@@ -59,7 +75,7 @@ public class TapPlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tap_play);
 
         rand = new Random();
-        currImage = rand.nextInt(9);
+        currImage = rand.nextInt(totalImages - 1);
 
         setAnswers();
 //        setCurrentImage();
@@ -67,6 +83,7 @@ public class TapPlayActivity extends AppCompatActivity {
 
         final ImageView imageView = findViewById(R.id.imageView);
         imageView.setImageResource(images[currImage]);
+//        setCurrentImage();
         bm = BitmapFactory.decodeResource(getResources(), labels[currImage]);
 
         imageView.setOnTouchListener(new View.OnTouchListener() {
@@ -81,11 +98,14 @@ public class TapPlayActivity extends AppCompatActivity {
                     score++;
                     mp = MediaPlayer.create(TapPlayActivity.this, R.raw.car_honk);
                     mp.start();
-                    //addToast("CORRECT");
+                    obj.incrementScore();
+
+//                    addToast("CORRECT");
                 }
                 else {
-                    //addToast("WRONG");
+//                    addToast("WRONG");
                 }
+
                 if (String.valueOf(score).equals(answers[currImage]) || score >= 1) isCorrect = true;
                 return false;
             }
@@ -113,10 +133,21 @@ public class TapPlayActivity extends AppCompatActivity {
             public void onFinish() {
                 progressBar.setProgress(0);
                 finish = 1;
-
+                mp = null;
                 if (correctAnswers >= obj.difficultyLevel+1) {
-                    finish();
-                    startQuestionActivity(obj);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(TapPlayActivity.this);
+                    builder.setMessage("Your Total Score:" + Integer.toString(obj.score))
+                            .setCancelable(false)
+                            .setPositiveButton("Next Level", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    finish();
+                                    startQuestionActivity(obj);
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.setCanceledOnTouchOutside(false);
+                    alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
+                    alert.show();
                 }
                 else {
                     AlertDialog alertDialog;
@@ -151,7 +182,6 @@ public class TapPlayActivity extends AppCompatActivity {
                     correctAnswers++;
                     setNewImage();
                     setCurrentImage();
-                    obj.incrementScore();
                     scoreText.setText("Score: " + Integer.toString(obj.score));
 
 
@@ -165,6 +195,7 @@ public class TapPlayActivity extends AppCompatActivity {
                     alertDialog.setIcon(R.drawable.wrong);
                     alertDialog.setCanceledOnTouchOutside(false);
                     alertDialog.setCancelable(false);
+                    alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
                     alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(TapPlayActivity.this, HomeActivity.class);
@@ -174,12 +205,35 @@ public class TapPlayActivity extends AppCompatActivity {
                     });
                     alertDialog.show();
                 }
-                mp.release();
-                mp = null;
+                if (mp != null) {
+                    mp.release();
+                }
+//                mp = null;
             }
         });
         progressBarTimer.start();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to exit?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        ExitActivity.exitApplicationAndRemoveFromRecent(TapPlayActivity.this);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.setCanceledOnTouchOutside(false);
+        alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
+        alert.show();
     }
 
     private SharedClass getObject() {
@@ -196,10 +250,9 @@ public class TapPlayActivity extends AppCompatActivity {
 
     }
 
-    //REmoving harcoding functions start from below here
     private void setAnswers() {
-        for (int i = 1; i <= 9; i++) {
-            answers[i - 1] = String.valueOf(getCarNum("img0" + String.valueOf(i) + ".json" ));
+        for (int i = 0; i < totalImages; i++) {
+            answers[i] = String.valueOf(getCarNum(assets[i]));
         }
     }
 
@@ -242,17 +295,18 @@ public class TapPlayActivity extends AppCompatActivity {
     private void setNewImage() {
         int prevcurrImage = currImage;
         while (prevcurrImage == currImage) {
-            currImage = rand.nextInt(9);
+            currImage = rand.nextInt(totalImages - 1);
         }
     }
 
     private void setCurrentImage() {
         final ImageView imageView = findViewById(R.id.imageView);
-//        imageView.setImageResource(images[currImage]);
+        imageView.setImageResource(images[currImage]);
+//        Glide.with(this)
+//                .load(images[currImage])
+//                .into(imageView);
+        bm = BitmapFactory.decodeResource(getResources(), labels[currImage]);
 //        Log.i(TAG, storageReference.toString());
-        Glide.with(this)
-                .load(images[currImage])
-                .into(imageView);
     }
 
     private void addToast(String value) {
