@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -134,6 +135,10 @@ public class QuestionPageActivity extends AppCompatActivity {
         alert.setCanceledOnTouchOutside(false);
         alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
         alert.show();
+        Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+        nbutton.setTextColor(Color.parseColor("#448AFF"));
+        Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+        pbutton.setTextColor(Color.parseColor("#448AFF"));
     }
 
     public void startNewActivity(SharedClass sharedObject) {

@@ -72,6 +72,7 @@ public class HomeActivity extends AppCompatActivity
         SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
+        signInButton.setVisibility(View.GONE);
         // [END customize_button]
     }
 
@@ -314,5 +315,10 @@ class SharedClass implements Serializable {
     public void incrementScore() {
         this.score+=10;
     }
+
+    public void incrementScore(int score) {
+        this.score+=score;
+    }
+
 
 }

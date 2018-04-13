@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -78,41 +79,11 @@ public class TapPlayActivity extends AppCompatActivity {
         currImage = rand.nextInt(totalImages - 1);
 
         setAnswers();
-//        setCurrentImage();
         final SharedClass obj = getObject();
 
         final ImageView imageView = findViewById(R.id.imageView);
         imageView.setImageResource(images[currImage]);
-//        setCurrentImage();
         bm = BitmapFactory.decodeResource(getResources(), labels[currImage]);
-
-        imageView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int x = (int)event.getX(), y = (int)event.getY();
-                float scaleHeight = (float) imageView.getDrawable().getIntrinsicHeight() / imageView.getHeight();
-                float scaleWidth = (float) imageView.getDrawable().getIntrinsicWidth() / imageView.getWidth();
-                int pixel = bm.getPixel((int)(scaleWidth * x),(int)(scaleHeight * y));
-                int redValue = Color.red(pixel);
-                if (redValue == 26) {
-                    score++;
-                    mp = MediaPlayer.create(TapPlayActivity.this, R.raw.car_honk);
-                    mp.start();
-                    obj.incrementScore();
-
-//                    addToast("CORRECT");
-                }
-                else {
-//                    addToast("WRONG");
-                }
-
-                if (String.valueOf(score).equals(answers[currImage]) || score >= 1) isCorrect = true;
-                return false;
-            }
-
-
-        });
-
 
         final TextView scoreText = findViewById(R.id.scoreTextBox2);
         scoreText.setText("Score: " + Integer.toString(obj.score));
@@ -148,6 +119,8 @@ public class TapPlayActivity extends AppCompatActivity {
                     alert.setCanceledOnTouchOutside(false);
                     alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
                     alert.show();
+                    Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+                    pbutton.setTextColor(Color.parseColor("#448AFF"));
                 }
                 else {
                     AlertDialog alertDialog;
@@ -157,6 +130,7 @@ public class TapPlayActivity extends AppCompatActivity {
                     alertDialog.setIcon(R.drawable.wrong);
                     alertDialog.setCanceledOnTouchOutside(false);
                     alertDialog.setCancelable(false);
+                    alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
                     alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(TapPlayActivity.this, HomeActivity.class);
@@ -165,6 +139,10 @@ public class TapPlayActivity extends AppCompatActivity {
                         }
                     });
                     alertDialog.show();
+                    Button nbutton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                    nbutton.setTextColor(Color.parseColor("#448AFF"));
+                    Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                    pbutton.setTextColor(Color.parseColor("#448AFF"));
                 }
             }
         }
@@ -183,7 +161,50 @@ public class TapPlayActivity extends AppCompatActivity {
                     setNewImage();
                     setCurrentImage();
                     scoreText.setText("Score: " + Integer.toString(obj.score));
+                    isCorrect = false;
+                }
+                else {
+                    progressBarTimer.cancel();
+                    AlertDialog alertDialog;
+                    alertDialog = new AlertDialog.Builder(TapPlayActivity.this).create();
+                    alertDialog.setTitle("Wrong Answer");
+                    alertDialog.setMessage("Sorry, You Lost!");
+                    alertDialog.setIcon(R.drawable.wrong);
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.setCancelable(false);
+                    alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
+                    alertDialog.setButton("HOME", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(TapPlayActivity.this, HomeActivity.class);
+                            finish();
+                            startActivity(intent);
+                        }
+                    });
+                    alertDialog.show();
+                    Button nbutton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                    nbutton.setTextColor(Color.parseColor("#448AFF"));
+                    Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                    pbutton.setTextColor(Color.parseColor("#448AFF"));
+                }
+                if (mp != null) {
+                    mp.release();
+                }
+            }
+        });
 
+        imageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int x = (int)event.getX(), y = (int)event.getY();
+                float scaleHeight = (float) imageView.getDrawable().getIntrinsicHeight() / imageView.getHeight();
+                float scaleWidth = (float) imageView.getDrawable().getIntrinsicWidth() / imageView.getWidth();
+                int pixel = bm.getPixel((int)(scaleWidth * x),(int)(scaleHeight * y));
+                int redValue = Color.red(pixel);
+                if (redValue == 26) {
+                    score++;
+                    mp = MediaPlayer.create(TapPlayActivity.this, R.raw.car_honk);
+                    mp.start();
+                    obj.incrementScore(20);
 
                 }
                 else {
@@ -204,12 +225,17 @@ public class TapPlayActivity extends AppCompatActivity {
                         }
                     });
                     alertDialog.show();
+                    Button nbutton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                    nbutton.setTextColor(Color.parseColor("#448AFF"));
+                    Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                    pbutton.setTextColor(Color.parseColor("#448AFF"));
                 }
-                if (mp != null) {
-                    mp.release();
-                }
-//                mp = null;
+
+                if (String.valueOf(score).equals(answers[currImage]) || score >= 1) isCorrect = true;
+                return false;
             }
+
+
         });
         progressBarTimer.start();
 
@@ -217,23 +243,31 @@ public class TapPlayActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to exit?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        ExitActivity.exitApplicationAndRemoveFromRecent(TapPlayActivity.this);
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.setCanceledOnTouchOutside(false);
-        alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
-        alert.show();
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure you want to exit?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ExitActivity.exitApplicationAndRemoveFromRecent(TapPlayActivity.this);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setCanceledOnTouchOutside(false);
+            alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
+            alert.show();
+            Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setTextColor(Color.parseColor("#448AFF"));
+            Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+            pbutton.setTextColor(Color.parseColor("#448AFF"));
+        } catch (WindowManager.BadTokenException bte) {
+            bte.printStackTrace();
+        }
     }
 
     private SharedClass getObject() {

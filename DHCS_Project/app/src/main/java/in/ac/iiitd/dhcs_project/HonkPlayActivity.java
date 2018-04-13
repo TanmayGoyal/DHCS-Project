@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -129,6 +130,8 @@ public class HonkPlayActivity extends AppCompatActivity {
                     alert.setCanceledOnTouchOutside(false);
                     alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
                     alert.show();
+                    Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+                    pbutton.setTextColor(Color.parseColor("#448AFF"));
                 }
                 else {
                     AlertDialog alertDialog;
@@ -147,6 +150,10 @@ public class HonkPlayActivity extends AppCompatActivity {
                         }
                     });
                     alertDialog.show();
+                    Button nbutton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                    nbutton.setTextColor(Color.parseColor("#448AFF"));
+                    Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                    pbutton.setTextColor(Color.parseColor("#448AFF"));
                 }
             }
         }
@@ -174,7 +181,6 @@ public class HonkPlayActivity extends AppCompatActivity {
                     setNewImage();
 //                    addToast("Correct Answer");
                     correctAnswers++;
-
                     obj.incrementScore();
                     scoreText.setText("Score: " + Integer.toString(obj.score));
 
@@ -198,6 +204,10 @@ public class HonkPlayActivity extends AppCompatActivity {
                         }
                     });
                     alertDialog.show();
+                    Button nbutton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                    nbutton.setTextColor(Color.parseColor("#448AFF"));
+                    Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                    pbutton.setTextColor(Color.parseColor("#448AFF"));
                 }
                 numOfClicks = 0;
                 setCurrentImage();
@@ -215,23 +225,31 @@ public class HonkPlayActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to exit?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        ExitActivity.exitApplicationAndRemoveFromRecent(HonkPlayActivity.this);
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.setCanceledOnTouchOutside(false);
-        alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
-        alert.show();
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure you want to exit?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ExitActivity.exitApplicationAndRemoveFromRecent(HonkPlayActivity.this);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setCanceledOnTouchOutside(false);
+            alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
+            alert.show();
+            Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setTextColor(Color.parseColor("#448AFF"));
+            Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+            pbutton.setTextColor(Color.parseColor("#448AFF"));
+        } catch (WindowManager.BadTokenException bte) {
+            bte.printStackTrace();
+        }
     }
 
     private SharedClass getObject() {

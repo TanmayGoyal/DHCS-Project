@@ -3,10 +3,12 @@ package in.ac.iiitd.dhcs_project;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -112,6 +114,8 @@ public class ScratchPlayActivity extends AppCompatActivity {
                     alert.setCanceledOnTouchOutside(false);
                     alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
                     alert.show();
+                    Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+                    pbutton.setTextColor(Color.parseColor("#448AFF"));
                 }
             });
             but2.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +161,8 @@ public class ScratchPlayActivity extends AppCompatActivity {
                     alert.setCanceledOnTouchOutside(false);
                     alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
                     alert.show();
+                    Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+                    pbutton.setTextColor(Color.parseColor("#448AFF"));
                 }
             });
             but1.setOnClickListener(new View.OnClickListener() {
@@ -202,6 +208,8 @@ public class ScratchPlayActivity extends AppCompatActivity {
                     alert.setCanceledOnTouchOutside(false);
                     alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
                     alert.show();
+                    Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+                    pbutton.setTextColor(Color.parseColor("#448AFF"));
                 }
             });
             but1.setOnClickListener(new View.OnClickListener() {
@@ -247,6 +255,8 @@ public class ScratchPlayActivity extends AppCompatActivity {
                     alert.setCanceledOnTouchOutside(false);
                     alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
                     alert.show();
+                    Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+                    pbutton.setTextColor(Color.parseColor("#448AFF"));
                 }
             });
             but1.setOnClickListener(new View.OnClickListener() {
@@ -276,23 +286,31 @@ public class ScratchPlayActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to exit?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        ExitActivity.exitApplicationAndRemoveFromRecent(ScratchPlayActivity.this);
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.setCanceledOnTouchOutside(false);
-        alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
-        alert.show();
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Are you sure you want to exit?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ExitActivity.exitApplicationAndRemoveFromRecent(ScratchPlayActivity.this);
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setCanceledOnTouchOutside(false);
+            alert.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
+            alert.show();
+            Button nbutton = alert.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setTextColor(Color.parseColor("#448AFF"));
+            Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
+            pbutton.setTextColor(Color.parseColor("#448AFF"));
+        } catch (WindowManager.BadTokenException bte) {
+            bte.printStackTrace();
+        }
     }
 
     private SharedClass getObject() {
@@ -383,5 +401,9 @@ public class ScratchPlayActivity extends AppCompatActivity {
             }
         });
         alertDialog.show();
+        Button nbutton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        nbutton.setTextColor(Color.parseColor("#448AFF"));
+        Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        pbutton.setTextColor(Color.parseColor("#448AFF"));
     }
 }
