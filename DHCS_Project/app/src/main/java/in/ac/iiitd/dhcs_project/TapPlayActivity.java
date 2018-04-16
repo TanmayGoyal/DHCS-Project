@@ -25,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,6 +69,9 @@ public class TapPlayActivity extends AppCompatActivity {
 
     private MediaPlayer mp;
 
+    private String accountID;
+    private String displayName;
+
     ProgressBar progressBar;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -74,6 +79,9 @@ public class TapPlayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tap_play);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference databaseReference = database.getReference();
 
         rand = new Random();
         currImage = rand.nextInt(totalImages - 1);
@@ -105,6 +113,9 @@ public class TapPlayActivity extends AppCompatActivity {
                 progressBar.setProgress(0);
                 finish = 1;
                 mp = null;
+                accountID = getIntent().getStringExtra("id");
+                displayName = getIntent().getStringExtra("name");
+                score = getIntent().getIntExtra("score", obj.score);
                 if (correctAnswers >= obj.difficultyLevel+1) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(TapPlayActivity.this);
                     builder.setMessage("Your Total Score:" + Integer.toString(obj.score))
@@ -121,12 +132,14 @@ public class TapPlayActivity extends AppCompatActivity {
                     alert.show();
                     Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
+//                    displayName = getIntent().getStringExtra("displayName");
+//                    databaseReference.child("users").child(displayName).setValue(obj.score);
                 }
                 else {
                     AlertDialog alertDialog;
                     alertDialog = new AlertDialog.Builder(TapPlayActivity.this).create();
-                    alertDialog.setTitle("Wrong Answer");
-                    alertDialog.setMessage("Sorry, You Lost!");
+                    alertDialog.setTitle("Time's Up");
+                    alertDialog.setMessage("Sorry, You haven't done enough to go to the next level!");
                     alertDialog.setIcon(R.drawable.wrong);
                     alertDialog.setCanceledOnTouchOutside(false);
                     alertDialog.setCancelable(false);
@@ -143,6 +156,7 @@ public class TapPlayActivity extends AppCompatActivity {
                     nbutton.setTextColor(Color.parseColor("#448AFF"));
                     Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
+                    databaseReference.child("users").child(accountID).child("score").setValue(obj.score);
                 }
             }
         }
@@ -155,6 +169,9 @@ public class TapPlayActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                accountID = getIntent().getStringExtra("id");
+                displayName = getIntent().getStringExtra("name");
+                score = getIntent().getIntExtra("score", obj.score);
                 if (isCorrect) {
 //                    startQuestionActivity(obj);
                     correctAnswers++;
@@ -185,6 +202,7 @@ public class TapPlayActivity extends AppCompatActivity {
                     nbutton.setTextColor(Color.parseColor("#448AFF"));
                     Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
+                    databaseReference.child("users").child(accountID).child("score").setValue(obj.score);
                 }
                 if (mp != null) {
                     mp.release();
@@ -195,6 +213,9 @@ public class TapPlayActivity extends AppCompatActivity {
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                accountID = getIntent().getStringExtra("id");
+                displayName = getIntent().getStringExtra("name");
+                score = getIntent().getIntExtra("score", obj.score);
                 int x = (int)event.getX(), y = (int)event.getY();
                 float scaleHeight = (float) imageView.getDrawable().getIntrinsicHeight() / imageView.getHeight();
                 float scaleWidth = (float) imageView.getDrawable().getIntrinsicWidth() / imageView.getWidth();
@@ -229,6 +250,7 @@ public class TapPlayActivity extends AppCompatActivity {
                     nbutton.setTextColor(Color.parseColor("#448AFF"));
                     Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
+                    databaseReference.child("users").child(displayName).setValue(obj.score);
                 }
 
                 if (String.valueOf(score).equals(answers[currImage]) || score >= 1) isCorrect = true;
@@ -279,7 +301,9 @@ public class TapPlayActivity extends AppCompatActivity {
         Intent intent;
         intent = new Intent(this, QuestionPageActivity.class);
         intent.putExtra("sharedObject", sharedObject);
-
+        intent.putExtra("id", accountID);
+        intent.putExtra("name", displayName);
+        intent.putExtra("score", score);
         startActivity(intent);
 
     }

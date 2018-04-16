@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.cooltechworks.utils.BitmapUtils;
 import com.cooltechworks.views.ScratchImageView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,6 +59,12 @@ public class ScratchPlayActivity extends AppCompatActivity {
 
     final private int totalImages = 36;
     private String answers[] = new  String[totalImages];
+    private String displayName;
+    private String accountID;
+    private int score;
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    final DatabaseReference databaseReference = database.getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +98,9 @@ public class ScratchPlayActivity extends AppCompatActivity {
 
 
     private void setButtons(Button but1, Button but2, Button but3, Button but4, int randomButton, int trueAns) {
+        accountID = getIntent().getStringExtra("id");
+        displayName = getIntent().getStringExtra("name");
+        score = getIntent().getIntExtra("score", obj.score);
         if (randomButton == 1) {
             but1.setText(String.valueOf(trueAns));
             but2.setText(String.valueOf(trueAns - 1));
@@ -116,6 +127,8 @@ public class ScratchPlayActivity extends AppCompatActivity {
                     alert.show();
                     Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
+//                    displayName = getIntent().getStringExtra("displayName");
+//                    databaseReference.child("users").child(displayName).setValue(obj.score);
                 }
             });
             but2.setOnClickListener(new View.OnClickListener() {
@@ -163,6 +176,8 @@ public class ScratchPlayActivity extends AppCompatActivity {
                     alert.show();
                     Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
+//                    displayName = getIntent().getStringExtra("displayName");
+//                    databaseReference.child("users").child(displayName).setValue(obj.score);
                 }
             });
             but1.setOnClickListener(new View.OnClickListener() {
@@ -210,6 +225,8 @@ public class ScratchPlayActivity extends AppCompatActivity {
                     alert.show();
                     Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
+//                    displayName = getIntent().getStringExtra("displayName");
+//                    databaseReference.child("users").child(displayName).setValue(obj.score);
                 }
             });
             but1.setOnClickListener(new View.OnClickListener() {
@@ -257,6 +274,8 @@ public class ScratchPlayActivity extends AppCompatActivity {
                     alert.show();
                     Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
+//                    displayName = getIntent().getStringExtra("displayName");
+//                    databaseReference.child("users").child(displayName).setValue(obj.score);
                 }
             });
             but1.setOnClickListener(new View.OnClickListener() {
@@ -322,6 +341,9 @@ public class ScratchPlayActivity extends AppCompatActivity {
         Intent intent;
         intent = new Intent(this, QuestionPageActivity.class);
         intent.putExtra("sharedObject", sharedObject);
+        intent.putExtra("id", accountID);
+        intent.putExtra("name", displayName);
+        intent.putExtra("score", score);
 
         startActivity(intent);
 
@@ -405,5 +427,6 @@ public class ScratchPlayActivity extends AppCompatActivity {
         nbutton.setTextColor(Color.parseColor("#448AFF"));
         Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
         pbutton.setTextColor(Color.parseColor("#448AFF"));
+        databaseReference.child("users").child(accountID).child("score").setValue(obj.score);
     }
 }

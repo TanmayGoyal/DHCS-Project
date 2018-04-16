@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -23,6 +25,11 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -40,7 +47,13 @@ public class HomeActivity extends AppCompatActivity
     private int currentLevel = 0;
     private GoogleSignInClient mGoogleSignInClient;
     private TextView mStatusTextView;
+    private String displayName;
+    private String accountID;
+    private int score = 0;
     SharedClass sharedObject;// = new SharedClass();
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference reference = database.getReference();
 
 
     @Override
@@ -72,7 +85,7 @@ public class HomeActivity extends AppCompatActivity
         SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
-        signInButton.setVisibility(View.GONE);
+//        signInButton.setVisibility(View.GONE);
         // [END customize_button]
     }
 
@@ -89,7 +102,7 @@ public class HomeActivity extends AppCompatActivity
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
-                        finishAndRemoveTask();
+                        finish();
                         System.exit(0);
                     }
                 })
@@ -111,8 +124,8 @@ public class HomeActivity extends AppCompatActivity
         // [START on_start_sign_in]
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
-//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-//        updateUI(account);
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        updateUI(account);
         // [END on_start_sign_in]
     }
 
@@ -190,15 +203,47 @@ public class HomeActivity extends AppCompatActivity
         if (account != null) {
             final CircleImageView imgProfilePic = findViewById(R.id.profile_image);
 //            mStatusTextView.setText(getString(R.string.signed_in_fmt, account.getDisplayName()));
-            Log.e(TAG, "display name: " + account.getDisplayName());
+            displayName = account.getDisplayName();
+            accountID = account.getId();
+            Log.e(TAG, "display name: " + displayName);
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (!snapshot.child("users").child(accountID).exists()) {
+                        Log.e(TAG, "display name: Did not exist");
+                        reference.child("users").child(accountID).child("name").setValue(displayName);
+                        reference.child("users").child(accountID).child("score").setValue(score);
+                    }
+                }
 
-            String personPhotoUrl = account.getPhotoUrl().toString();
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                    // ...
+                }
+            });
+//            String personPhotoUrl = account.getPhotoUrl().toString();
+//
+//            try {
+//                Glide.with(this)
+//                        .load(account.getPhotoUrl().toString())
+//                        .apply(new RequestOptions()
+//                                .placeholder(R.drawable.person2))
+//                        .into(imgProfilePic);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            new ImageLoadTask(personPhotoUrl, imgProfilePic).execute();
+            try {
+                new ImageLoadTask(account.getPhotoUrl().toString(), imgProfilePic).execute();
+            } catch (NullPointerException npe) {
+                new ImageLoadTask("https://soygrowers.com/wp-content/uploads/2017/02/default_bio_600x600.jpg", imgProfilePic).execute();
+            }
 
 //            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
-            mStatusTextView.setText(R.string.signed_out);
+//            mStatusTextView.setText(R.string.signed_out);
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
 //            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
@@ -229,7 +274,15 @@ public class HomeActivity extends AppCompatActivity
 
         Intent intent = new Intent(this, QuestionPageActivity.class);
         intent.putExtra("sharedObject", sharedObject);
+        intent.putExtra("id", accountID);
+        intent.putExtra("name", displayName);
+        intent.putExtra("score", score);
 //        intent.putExtra("sharedObject2", test2);
+        startActivity(intent);
+    }
+
+    public void goToLeaderboard(View view) {
+        Intent intent = new Intent(this, LeaderboardActivity.class);
         startActivity(intent);
     }
 }
@@ -320,5 +373,7 @@ class SharedClass implements Serializable {
         this.score+=score;
     }
 
-
+    public int getScore() {
+        return score;
+    }
 }

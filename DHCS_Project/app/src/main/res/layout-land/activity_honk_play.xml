@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginLeft="8dp" />
 
-    <ImageView
+    <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/imageDisplay"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -29,11 +29,14 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="96dp"
         android:layout_weight="5"
-        android:src="@drawable/aachen_000018_000019_original"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:riv_corner_radius="30dip"
+        app:riv_border_width="2dip"
+        app:riv_border_color="#333333"
+        app:riv_mutate_background="true"/>
 
     <Button
         android:id="@+id/honkButton"

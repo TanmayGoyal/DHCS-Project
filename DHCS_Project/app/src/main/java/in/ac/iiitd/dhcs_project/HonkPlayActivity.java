@@ -72,6 +72,10 @@ public class HonkPlayActivity extends AppCompatActivity {
 
     private MediaPlayer mp;
 
+    private String accountID;
+    private String displayName;
+    private int score = 0;
+
     ProgressBar progressBar;
 
     @Override
@@ -80,9 +84,9 @@ public class HonkPlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_honk_play);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference("message");
+        final DatabaseReference databaseReference = database.getReference();
 
-        databaseReference.setValue("Hello World!");
+//        databaseReference.setValue("Hello World!");
         final SharedClass obj = getObject();
 
         final TextView scoreText = findViewById(R.id.scoreTextBox1);
@@ -114,8 +118,9 @@ public class HonkPlayActivity extends AppCompatActivity {
                 progressBar.setProgress(0);
                 finish = 1;
                 mp = null;
-
-
+                accountID = getIntent().getStringExtra("id");
+                displayName = getIntent().getStringExtra("name");
+                score = getIntent().getIntExtra("score", obj.score);
                 if (correctAnswers >= obj.difficultyLevel+1) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(HonkPlayActivity.this);
                     builder.setMessage("Your Total Score:" + Integer.toString(obj.score))
@@ -132,6 +137,8 @@ public class HonkPlayActivity extends AppCompatActivity {
                     alert.show();
                     Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
+//                    displayName = getIntent().getStringExtra("displayName");
+//                    databaseReference.child("users").child(displayName).setValue(obj.score);
                 }
                 else {
                     AlertDialog alertDialog;
@@ -154,6 +161,7 @@ public class HonkPlayActivity extends AppCompatActivity {
                     nbutton.setTextColor(Color.parseColor("#448AFF"));
                     Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
+                    databaseReference.child("users").child(accountID).child("score").setValue(obj.score);
                 }
             }
         }
@@ -177,6 +185,9 @@ public class HonkPlayActivity extends AppCompatActivity {
         rotateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
+                accountID = getIntent().getStringExtra("id");
+                displayName = getIntent().getStringExtra("name");
+                score = getIntent().getIntExtra("score", obj.score);
                 if (String.valueOf(numOfClicks).equals(answers[currImage])) {
                     setNewImage();
 //                    addToast("Correct Answer");
@@ -208,6 +219,7 @@ public class HonkPlayActivity extends AppCompatActivity {
                     nbutton.setTextColor(Color.parseColor("#448AFF"));
                     Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
+                    databaseReference.child("users").child(accountID).child("score").setValue(obj.score);
                 }
                 numOfClicks = 0;
                 setCurrentImage();
@@ -261,7 +273,9 @@ public class HonkPlayActivity extends AppCompatActivity {
         Intent intent;
         intent = new Intent(this, QuestionPageActivity.class);
         intent.putExtra("sharedObject", sharedObject);
-
+        intent.putExtra("id", accountID);
+        intent.putExtra("name", displayName);
+        intent.putExtra("score", score);
         startActivity(intent);
 
     }

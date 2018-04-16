@@ -42,6 +42,9 @@
             android:name=".ScratchPlayActivity"
             android:screenOrientation="landscape" />
         <activity
+            android:name=".LeaderboardActivity"
+            android:screenOrientation="landscape" />
+        <activity
             android:name=".ExitActivity"
             android:screenOrientation="landscape" />
 

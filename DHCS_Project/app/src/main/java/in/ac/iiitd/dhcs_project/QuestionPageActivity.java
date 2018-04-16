@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,9 +23,12 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 public class QuestionPageActivity extends AppCompatActivity {
+    private static final String TAG = "QuestionPageActivity";
 
+    int score = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question_page);
 
@@ -146,14 +150,26 @@ public class QuestionPageActivity extends AppCompatActivity {
         if (sharedObject.currentLevel == 1) {
             intent = new Intent(this, HonkPlayActivity.class);
             intent.putExtra("sharedObject", sharedObject);
+            Log.e(TAG, "displayName: " + getDisplayName());
+            intent.putExtra("id", getAccountID());
+            intent.putExtra("name", getDisplayName());
+            intent.putExtra("score", getScore());
         }
         else if (sharedObject.currentLevel == 2) {
             intent = new Intent(this, TapPlayActivity.class);
             intent.putExtra("sharedObject", sharedObject);
+            Log.e(TAG, "displayName: " + getDisplayName());
+            intent.putExtra("id", getAccountID());
+            intent.putExtra("name", getDisplayName());
+            intent.putExtra("score", getScore());
         }
         else  {
             intent = new Intent(this, ScratchPlayActivity.class);
             intent.putExtra("sharedObject", sharedObject);
+            Log.e(TAG, "name: " + getDisplayName());
+            intent.putExtra("id", getAccountID());
+            intent.putExtra("name", getDisplayName());
+            intent.putExtra("score", getScore());
         }
         startActivity(intent);
 
@@ -169,8 +185,21 @@ public class QuestionPageActivity extends AppCompatActivity {
         levelText.setText("Level " + Integer.toString(sharedObject.difficultyLevel*(sharedObject.maxLevel-1) + sharedObject.currentLevel));
         levelInformation.setText(sharedObject.levelInfo[sharedObject.currentLevel]);
     }
+
     private SharedClass getObject() {
         Intent i = getIntent();
         return (SharedClass) i.getSerializableExtra("sharedObject");
+    }
+
+    private String getAccountID() {
+        return getIntent().getStringExtra("id");
+    }
+
+    private String getDisplayName() {
+        return getIntent().getStringExtra("name");
+    }
+
+    private int getScore() {
+        return getIntent().getIntExtra("score", score);
     }
 }
