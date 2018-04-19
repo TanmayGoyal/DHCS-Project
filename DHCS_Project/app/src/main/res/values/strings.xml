@@ -58,5 +58,7 @@
     <string name="firebaseui_title_text">FirebaseUI Auth</string>
     <string name="firebase_status_fmt">Firebase User: %s</string>
     <string name="firebase_user_management">Firebase User Management</string>
+    <string name="arrow"> &lt;---- </string>
+    <string name="tutorial">Tutorial</string>
 
 </resources>

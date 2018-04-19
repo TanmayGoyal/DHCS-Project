@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -88,6 +90,30 @@ public class HomeActivity extends AppCompatActivity
 //        signInButton.setVisibility(View.GONE);
         // [END customize_button]
     }
+
+//    private void signInSilently() {
+//        final GoogleSignInClient signInClient = GoogleSignIn.getClient(this,
+//                GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN);
+//        signInClient.silentSignIn().addOnCompleteListener(this,
+//                new OnCompleteListener<GoogleSignInAccount>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+//                        if (task.isSuccessful()) {
+//                            // The signed in account is stored in the task's result.
+//                            GoogleSignInAccount signedInAccount = task.getResult();
+//                        } else {
+//                            signIn();
+//                            // Player will need to sign-in explicitly using via UI
+//                        }
+//                    }
+//                });
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        signInSilently();
+//    }
 
     @Override
     public void onBackPressed() {
@@ -266,19 +292,31 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void goToHonkPlay(View view) {
-
-//        int score = 0;
-//        int currentLevel = 0;
-//        public String[] levelInfo;
-
-
-        Intent intent = new Intent(this, QuestionPageActivity.class);
-        intent.putExtra("sharedObject", sharedObject);
-        intent.putExtra("id", accountID);
-        intent.putExtra("name", displayName);
-        intent.putExtra("score", score);
-//        intent.putExtra("sharedObject2", test2);
-        startActivity(intent);
+        if (isSignedIn()) {
+            Intent intent = new Intent(this, QuestionPageActivity.class);
+            intent.putExtra("sharedObject", sharedObject);
+            intent.putExtra("id", accountID);
+            intent.putExtra("name", displayName);
+            intent.putExtra("score", score);
+            startActivity(intent);
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("You need to sign-in to start the game.")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //do things
+                        }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.setCanceledOnTouchOutside(false);
+            alertDialog.setCancelable(false);
+            alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
+            alertDialog.show();
+            Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            pbutton.setTextColor(Color.parseColor("#448AFF"));
+        }
     }
 
     public void goToLeaderboard(View view) {

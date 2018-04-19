@@ -132,8 +132,6 @@ public class TapPlayActivity extends AppCompatActivity {
                     alert.show();
                     Button pbutton = alert.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
-//                    displayName = getIntent().getStringExtra("displayName");
-//                    databaseReference.child("users").child(displayName).setValue(obj.score);
                 }
                 else {
                     AlertDialog alertDialog;
@@ -250,7 +248,7 @@ public class TapPlayActivity extends AppCompatActivity {
                     nbutton.setTextColor(Color.parseColor("#448AFF"));
                     Button pbutton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     pbutton.setTextColor(Color.parseColor("#448AFF"));
-                    databaseReference.child("users").child(displayName).setValue(obj.score);
+                    databaseReference.child("users").child(accountID).child("score").setValue(obj.score);
                 }
 
                 if (String.valueOf(score).equals(answers[currImage]) || score >= 1) isCorrect = true;
